@@ -42,7 +42,7 @@ El repositorio contiene los siguientes módulos interactivos, accesibles desde e
 | **05. Dinámica de Juntura PN** | Zona de agotamiento, distribución de carga espacial, campo eléctrico interno y $V_0$. | `unidad4_simulacion_pn.html` |
 | **06. Transistor Bipolar (BJT)** | Regiones de operación (corte, activa, saturación) e inyección de portadores minoritarios. | `unidad5_simulacion_bjt.html` |
 | **07. Transistor JFET** | Efecto de campo por juntura, estrangulamiento de canal (*Pinch-off*) y conductancia. | `unidad6_simulacion_jfet.html` |
-| **06. Estructura MOS y MOSFET** | Regímenes de acumulación, deplexión e inversión, tensión de umbral $V_T$ y canal N. | `unidad7_simulacion_mosfet.html` |
+| **08. Estructura MOS y MOSFET** | Regímenes de acumulación, deplexión e inversión, tensión de umbral $V_T$ y canal N. | `unidad7_simulacion_mosfet.html` |
 | **09. Comparativa JFET vs. MOSFET** | Análisis comparativo de impedancias, estructuras aisladas (MOS) y curvas características. | `unidad7_simulacion_jfet_vs_mosfet.html` |
 
 ---
