@@ -4,7 +4,6 @@
 ![CSS3]([suspicious link removed])
 ![JavaScript]([suspicious link removed])
 ![UNSL]([suspicious link removed])
-![Status]([suspicious link removed])
 
 Repositorio oficial del **Laboratorio Virtual de Física de los Semiconductores**, desarrollado para la **Facultad de Ingeniería y Ciencias Agropecuarias (FICA)** de la **Universidad Nacional de San Luis (UNSL)**.
 
@@ -26,8 +25,7 @@ Este portal reúne una suite de **simuladores web interactivos** diseñados para
 
 Podés acceder al portal interactivo desplegado en tiempo real a través del siguiente enlace:
 
-👉 **[Portal del Laboratorio Virtual de Física de los Semiconductores](https://tu-usuario.github.io/nombre-del-repositorio/)**  
-*(Reemplazá `tu-usuario` y `nombre-del-repositorio` con los datos de tu cuenta de GitHub).*
+👉 **[Portal del Laboratorio Virtual de Física de los Semiconductores](https://jlbossa-git.github.io/simuladores-fisica-semiconductores/)
 
 ---
 
