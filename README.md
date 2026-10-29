@@ -1,10 +1,5 @@
 # Física de los Semiconductores — Laboratorio Virtual y Simuladores Interactivos
 
-![HTML5]([suspicious link removed])
-![CSS3]([suspicious link removed])
-![JavaScript]([suspicious link removed])
-![UNSL]([suspicious link removed])
-
 Repositorio oficial del **Laboratorio Virtual de Física de los Semiconductores**, desarrollado para la **Facultad de Ingeniería y Ciencias Agropecuarias (FICA)** de la **Universidad Nacional de San Luis (UNSL)**.
 
 Este portal reúne una suite de **simuladores web interactivos** diseñados para facilitar la visualización e intuición física de conceptos cuánticos, transporte de portadores, junturas semiconductoras y transistores de efecto de campo y bipolares en la carrera de Ingeniería Electrónica.
