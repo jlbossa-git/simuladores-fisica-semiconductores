@@ -1,0 +1,254 @@
+:root {
+    --bg-main: #0f172a;
+    --bg-card: #1e293b;
+    --bg-card-hover: #334155;
+    --accent-cyan: #38bdf8;
+    --accent-amber: #f59e0b;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+    --radius: 12px;
+    --bg: var(--bg-main);
+    --panel: var(--bg-card);
+    --border: var(--border-color);
+    --blue: var(--accent-cyan);
+    --bg-dark: var(--bg-main);
+    --card-bg: var(--bg-card);
+    --card-border: var(--border-color);
+    --accent-blue: var(--accent-cyan);
+}
+
+html {
+    min-height: 100%;
+    overflow-y: auto !important;
+}
+
+body:not(.portal-page) {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    padding: 2rem 1rem !important;
+    background: var(--bg-main) !important;
+    color: var(--text-main) !important;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif !important;
+    line-height: 1.6;
+    overflow-y: auto !important;
+    --ff-sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --surface: var(--bg-card);
+    --surface-dim: var(--bg-main);
+    --surface-bright: var(--bg-card-hover);
+    --surface-background: var(--bg-main);
+    --surface-container: var(--bg-card);
+    --surface-container-high: var(--bg-card-hover);
+    --surface-translucent: rgba(30, 41, 59, 0.92);
+    --on-surface: var(--text-main);
+    --on-surface-variant: var(--text-muted);
+    --accent-container: rgba(56, 189, 248, 0.16);
+    --accent-fixed: var(--accent-cyan);
+    --primary: var(--accent-cyan);
+    --positive: var(--accent-amber);
+    --positive-container: rgba(245, 158, 11, 0.16);
+    --stroke-default: var(--border-color);
+    --chart-1: var(--accent-cyan);
+    --chart-2: #818cf8;
+    --chart-3: var(--accent-amber);
+    --outline: #64748b;
+    --error: #f87171;
+    --lumi-sys-color--surface: var(--bg-card);
+    --lumi-sys-color--surface-dim: var(--bg-main);
+    --lumi-sys-color--surface-bright: var(--bg-card-hover);
+    --lumi-sys-color--surface-background: var(--bg-main);
+    --lumi-sys-color--surface-container: var(--bg-card);
+    --lumi-sys-color--surface-container-high: var(--bg-card-hover);
+    --lumi-sys-color--surface-translucent: rgba(30, 41, 59, 0.92);
+    --lumi-sys-color--on-surface: var(--text-main);
+    --lumi-sys-color--on-surface-default: var(--text-main);
+    --lumi-sys-color--on-surface-variant: var(--text-muted);
+    --lumi-sys-color--accent: var(--accent-cyan);
+    --lumi-sys-color--accent-container: rgba(56, 189, 248, 0.16);
+    --lumi-sys-color--accent-fixed: var(--accent-cyan);
+    --lumi-sys-color--primary: var(--accent-cyan);
+    --lumi-sys-color--positive: var(--accent-amber);
+    --lumi-sys-color--positive-container: rgba(245, 158, 11, 0.16);
+    --lumi-sys-color--stroke-default: var(--border-color);
+}
+
+body:not(.portal-page) .font-sans {
+    font-family: inherit !important;
+}
+
+body:not(.portal-page) > .max-w-6xl,
+body:not(.portal-page) > .max-w-7xl,
+body:not(.portal-page) > .wrap,
+body:not(.portal-page) > .container,
+body:not(.portal-page) > .widget-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex: 1 0 auto;
+}
+
+body:not(.portal-page) > .wrap {
+    padding: 0;
+}
+
+body:not(.portal-page) > .max-w-6xl > header,
+body:not(.portal-page) > .max-w-7xl > header,
+body:not(.portal-page) > .container > header,
+body:not(.portal-page) .simulator-header,
+body:not(.portal-page) > .widget-container > .widget-header {
+    margin: 0 0 2rem;
+    padding: 1.5rem;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+body:not(.portal-page) header h1,
+body:not(.portal-page) .simulator-header h1 {
+    margin: 0 0 0.5rem;
+    color: var(--accent-cyan) !important;
+    font-size: clamp(1.6rem, 3vw, 2.25rem) !important;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+body:not(.portal-page) .widget-title {
+    color: var(--accent-cyan) !important;
+    font-size: clamp(1.6rem, 3vw, 2.25rem);
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+body:not(.portal-page) .legend-chip {
+    background: var(--surface-translucent) !important;
+    color: var(--text-muted) !important;
+    border-color: var(--border-color) !important;
+    min-width: 0;
+    text-align: center;
+}
+
+body:not(.portal-page) .viewport-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    height: 410px;
+    padding: 0.625rem;
+    box-sizing: border-box;
+    background: var(--bg-card) !important;
+}
+
+body:not(.portal-page) .canvas-legend {
+    position: static;
+    flex: 0 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+}
+
+body:not(.portal-page) #simCanvas {
+    flex: 1 1 0;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0;
+}
+
+body:not(.portal-page) .kpi-tag.jfet {
+    background: rgba(56, 189, 248, 0.16) !important;
+    color: var(--accent-cyan) !important;
+}
+
+body:not(.portal-page) .kpi-tag.mosfet {
+    background: rgba(245, 158, 11, 0.16) !important;
+    color: var(--accent-amber) !important;
+}
+
+body:not(.portal-page) header p,
+body:not(.portal-page) .simulator-header .sub {
+    margin: 0;
+    color: var(--text-muted) !important;
+}
+
+body:not(.portal-page) [class~="bg-slate-900"],
+body:not(.portal-page) [class~="bg-slate-800"],
+body:not(.portal-page) [class~="bg-slate-900/60"] {
+    background-color: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+}
+
+body:not(.portal-page) [class~="border-slate-700"],
+body:not(.portal-page) [class~="border-slate-800"] {
+    border-color: var(--border-color) !important;
+}
+
+body:not(.portal-page) .tab-btn {
+    border-radius: 9px;
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+body:not(.portal-page) .tab-btn.active {
+    background-color: var(--bg-card-hover) !important;
+    border-color: var(--accent-cyan) !important;
+    color: var(--accent-cyan) !important;
+}
+
+body:not(.portal-page) .btn-volver-portal {
+    background-color: var(--bg-card) !important;
+    color: var(--accent-cyan) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px;
+    font-family: inherit;
+}
+
+body:not(.portal-page) .btn-volver-portal:hover {
+    background-color: var(--bg-card-hover) !important;
+    border-color: var(--accent-cyan) !important;
+    color: #fff !important;
+}
+
+body:not(.portal-page) .sim-footer {
+    flex: 0 0 auto;
+    width: 100%;
+    margin-top: 3rem;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    background-color: var(--bg-main);
+    color: var(--text-muted);
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border-color);
+}
+
+body:not(.portal-page) .sim-footer p {
+    margin: 0.2rem 0;
+}
+
+body:not(.portal-page) .sim-footer strong {
+    color: var(--accent-cyan);
+}
+
+@media (max-width: 640px) {
+    body:not(.portal-page) {
+        padding: 4rem 0.75rem 1rem !important;
+    }
+
+    body:not(.portal-page) > .max-w-6xl > header,
+    body:not(.portal-page) > .max-w-7xl > header,
+    body:not(.portal-page) > .container > header,
+    body:not(.portal-page) .simulator-header,
+    body:not(.portal-page) > .widget-container > .widget-header {
+        padding: 1.25rem 1rem;
+    }
+
+    body:not(.portal-page) .viewport-container {
+        height: 520px;
+    }
+
+    body:not(.portal-page) .canvas-legend {
+        grid-template-columns: 1fr;
+    }
+}

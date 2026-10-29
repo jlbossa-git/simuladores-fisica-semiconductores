@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <!-- Renderizador de LaTeX (MathJax) -->
+<script>
+  MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Modelo Clásico vs. Bohr</title>
+<style>
+:root{--bg:#080c16;--panel:#141b2c;--border:#2b3752;--text:#f5f7fb;--muted:#b7c1d6;--blue:#79c7ff;--red:#ff7474;--gold:#ffd36a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}.wrap{max-width:1180px;margin:auto;padding:22px}h1{margin:0 0 5px;font-size:29px}.sub{color:var(--muted);margin-bottom:18px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card,.controls{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:14px}.classic h2{color:var(--red)}.bohr h2{color:var(--blue)}h2{font-size:19px;margin:0 0 10px}canvas{width:100%;height:auto;display:block;background:#04070d;border-radius:11px}.text{color:var(--muted);line-height:1.45;margin-top:9px;min-height:72px}.formula{font:20px Georgia,serif;background:#0b1220;border-radius:9px;padding:8px;margin-top:8px}.controls{margin-top:16px}.row{display:grid;grid-template-columns:1.2fr 1fr 1.2fr;gap:18px;align-items:center}label{font-weight:650}.value{font-size:21px;color:var(--blue);font-weight:750;margin:4px 0}input[type=range]{width:100%}button{background:#2b395b;color:white;border:0;border-radius:9px;padding:9px 13px;margin:3px;font-weight:650;cursor:pointer}button:hover{background:#3a4b70}.note{font-size:13px;color:var(--muted);margin-top:8px}.status{margin-top:10px;padding:9px;border-radius:9px;background:#0b1220;color:var(--muted);font-size:14px}.status b{color:#fff}@media(max-width:800px){.grid,.row{grid-template-columns:1fr}}
+</style>
+<link rel="stylesheet" href="assets/css/tema.css">
+</head>
+<body>
+    <!-- Botón Flotante para Volver al Portal (Misma Carpeta) -->
+<a href="index.html" class="btn-volver-portal">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+    </svg>
+    Volver al Portal
+</a>
+
+<style>
+    .btn-volver-portal {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 9999;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        background-color: #1e293b;
+        color: #38bdf8;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        text-decoration: none;
+        font-family: system-ui, -apple-system, sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        transition: all 0.2s ease;
+    }
+
+    .btn-volver-portal:hover {
+        background-color: #334155;
+        border-color: #38bdf8;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(56, 189, 248, 0.25);
+    }
+</style>
+    
+    <div class="wrap">
+<header class="simulator-header">
+        <p class="subtitle">Física de los Semiconductores - FICA (UNSL)</p>
+
+    <h1>Modelo Clásico vs. Bohr</h1>
+<div class="sub">Simulador Interactivo: Visualización del problema de la estabilidad atómica en el modelo clásico y la solución propuesta por Bohr.</div>
+</header>
+<div class="grid">
+<div class="card classic"><h2>Modelo clásico: radiación y caída hacia el núcleo</h2><canvas id="classic" width="560" height="470"></canvas><div class="text">Una carga acelerada debería emitir radiación. Al perder energía, el radio de la órbita disminuye progresivamente: el electrón describe una espiral hacia el núcleo.</div><div class="formula">F<sub>c</sub> = m · v² / r</div></div>
+<div class="card bohr"><h2>Modelo de Bohr: órbitas estacionarias cuantizadas</h2><canvas id="bohr" width="560" height="470"></canvas><div class="text">El electrón sólo puede ocupar determinados niveles. En una órbita estacionaria no irradia energía y permanece en ella; sólo cambia de nivel mediante una transición cuántica.</div><div class="formula">m · v · r<sub>n</sub> = n · h / (2 · π)</div></div>
+</div>
+<div class="controls"><div class="row">
+<div><label>Velocidad de animación</label><div class="value"><span id="speedValue">1,0×</span></div><input id="speed" type="range" min="0.1" max="3" step="0.1" value="1"><div class="note">Reducila para ver lentamente la espiral clásica.</div></div>
+<div><label>Nivel de Bohr</label><div class="value">n = <span id="nValue">3</span></div><input id="level" type="range" min="1" max="4" step="1" value="3"><div class="note">Las órbitas permitidas permanecen estables.</div></div>
+<div><label>Controles</label><br><button id="play">▶ Reproducir</button><button id="pause">Ⅱ Pausar</button><button id="reset">↺ Reiniciar</button><button id="trail">Trayectoria ✓</button><div class="status"><b>Idea clave:</b> el modelo clásico predice un átomo inestable; Bohr introduce estados estacionarios cuantizados.</div></div>
+</div></div></div>
+<script>
+const cc=document.getElementById('classic'),cb=document.getElementById('bohr'),cx=cc.getContext('2d'),bx=cb.getContext('2d');let running=true,trail=true,speed=1,n=3,rClassic=145,angle=0,radCount=0;
+document.getElementById('speed').oninput=e=>{speed=+e.target.value;document.getElementById('speedValue').textContent=speed.toFixed(1).replace('.',',')+'×'};
+document.getElementById('level').oninput=e=>{n=+e.target.value;document.getElementById('nValue').textContent=n};
+document.getElementById('play').onclick=()=>running=true;document.getElementById('pause').onclick=()=>running=false;document.getElementById('reset').onclick=()=>{rClassic=145;angle=0;radCount=0;running=true};document.getElementById('trail').onclick=()=>{trail=!trail;document.getElementById('trail').textContent=trail?'Trayectoria ✓':'Trayectoria'};
+function bg(q,w,h){q.fillStyle='#04070d';q.fillRect(0,0,w,h);for(let i=0;i<65;i++){let x=(i*83)%w,y=(i*47)%h;q.fillStyle='rgba(255,255,255,.055)';q.fillRect(x,y,1.3,1.3)}}
+function nuc(q,x,y){q.beginPath();q.arc(x,y,23,0,Math.PI*2);q.fillStyle='white';q.fill();q.fillStyle='#111827';q.font='bold 15px system-ui';q.textAlign='center';q.fillText('+q',x,y+5);q.textAlign='left'}
+function arrow(q,x,y,dx,dy,col){q.strokeStyle=col;q.lineWidth=2;q.beginPath();q.moveTo(x,y);q.lineTo(x+dx,y+dy);q.stroke();let L=Math.hypot(dx,dy);if(!L)return;let ux=dx/L,uy=dy/L;q.fillStyle=col;q.beginPath();q.moveTo(x+dx,y+dy);q.lineTo(x+dx-ux*10-uy*5,y+dy-uy*10+ux*5);q.lineTo(x+dx-ux*10+uy*5,y+dy-uy*10-ux*5);q.closePath();q.fill()}
+function drawClassic(){let w=cc.width,h=cc.height,x=w/2,y=h/2;bg(cx,w,h);nuc(cx,x,y);if(trail){cx.beginPath();for(let i=0;i<130;i++){let rr=rClassic+i*.55,aa=angle-i*.10,px=x+rr*Math.cos(aa),py=y+rr*Math.sin(aa);i?cx.lineTo(px,py):cx.moveTo(px,py)}cx.strokeStyle='rgba(255,116,116,.32)';cx.lineWidth=2;cx.stroke()}
+cx.beginPath();cx.arc(x,y,rClassic,0,Math.PI*2);cx.strokeStyle='#48536b';cx.setLineDash([4,7]);cx.stroke();cx.setLineDash([]);let ex=x+rClassic*Math.cos(angle),ey=y+rClassic*Math.sin(angle);cx.beginPath();cx.arc(ex,ey,10,0,Math.PI*2);cx.fillStyle='#ff7474';cx.shadowBlur=18;cx.shadowColor='#ff7474';cx.fill();cx.shadowBlur=0;arrow(cx,ex,ey,(x-ex)*.30,(y-ey)*.30,'#ffd36a');arrow(cx,ex,ey,-Math.sin(angle)*45,Math.cos(angle)*45,'#fff');cx.fillStyle='#ffd36a';cx.font='15px system-ui';cx.fillText('Fᶜ',ex+(x-ex)*.30+5,ey+(y-ey)*.30);cx.fillStyle='#fff';cx.font='italic 18px Georgia';cx.fillText('v',ex-Math.sin(angle)*49+5,ey+Math.cos(angle)*49);
+if(running){angle+=.024*speed*Math.max(.35,145/rClassic);rClassic-=.018*speed;if(rClassic<30){radCount++;rClassic=145;angle=0}}}
+function drawBohr(){let w=cb.width,h=cb.height,x=w/2,y=h/2;bg(bx,w,h);nuc(bx,x,y);for(let k=1;k<=4;k++){bx.beginPath();bx.arc(x,y,42*k,0,Math.PI*2);bx.strokeStyle=k===n?'#79c7ff':'#4d5870';bx.lineWidth=k===n?3:1.2;bx.stroke();bx.fillStyle='#8d9bb5';bx.font='14px system-ui';bx.fillText('n='+k,x+42*k+6,y-3)}let R=42*n,aa=-angle*.65,ex=x+R*Math.cos(aa),ey=y+R*Math.sin(aa);bx.beginPath();bx.arc(ex,ey,10,0,Math.PI*2);bx.fillStyle='#79c7ff';bx.shadowBlur=18;bx.shadowColor='#79c7ff';bx.fill();bx.shadowBlur=0;arrow(bx,ex,ey,Math.sin(aa)*43,-Math.cos(aa)*43,'#fff');bx.fillStyle='#79c7ff';bx.font='16px system-ui';bx.fillText('órbita estacionaria',x-76,y+205);if(running)angle+=.024*speed}
+function frame(){drawClassic();drawBohr();requestAnimationFrame(frame)}frame();
+</script>
+<footer class="sim-footer">
+    <p><strong>Física de los Semiconductores</strong> </p>
+    <p> José Luis Bossa </p>
+    <p> Facultad de Ingeniería y Ciencias Agropecuarias (FICA) - Universidad Nacional de San Luis </p>
+</footer>
+</body></html>

@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Renderizador de LaTeX (MathJax) -->
+<script>
+  MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dinámica de la Juntura PN</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #0b0f1a;
+            color: #f8fafc;
+        }
+        .tab-btn.active {
+            background-color: #1e293b;
+            border-color: #38bdf8;
+            color: #38bdf8;
+        }
+    </style>
+    <link rel="stylesheet" href="assets/css/tema.css">
+</head>
+<body class="p-4 md:p-6 font-sans">
+    <!-- Botón Flotante para Volver al Portal (Misma Carpeta) -->
+<a href="index.html" class="btn-volver-portal">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+    </svg>
+    Volver al Portal
+</a>
+
+<style>
+    .btn-volver-portal {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 9999;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        background-color: #1e293b;
+        color: #38bdf8;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        text-decoration: none;
+        font-family: system-ui, -apple-system, sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        transition: all 0.2s ease;
+    }
+
+    .btn-volver-portal:hover {
+        background-color: #334155;
+        border-color: #38bdf8;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(56, 189, 248, 0.25);
+    }
+</style>
+
+
+
+            <div class="max-w-6xl mx-auto">
+        <!-- Encabezado -->
+        <header class="mb-6 border-b border-slate-700 pb-4 text-center md:text-left">
+               <p class="subtitle">Física de los Semiconductores - FICA (UNSL)</p>
+
+            <h1 class="text-3xl font-extrabold text-sky-400">Dinámica de la Juntura PN</h1>
+            <p class="text-slate-400 mt-1">Simulador Interactivo: La Juntura en Equilibrio Térmico,Dinámica Secuencial y Equilibrio de Corrientes</p>
+        </header>
+
+        <!-- Navegación por Pestañas -->
+        <div class="flex flex-wrap gap-2 mb-6 border-b border-slate-800 pb-4">
+            <button onclick="switchTab('tab1')" id="btn-tab1" class="tab-btn active px-4 py-3 rounded-xl border border-slate-800 bg-slate-900 text-xs md:text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
+                <span>🤝</span> 1. Neutralidad, Difusión & Formación ZCE
+            </button>
+            <button onclick="switchTab('tab3')" id="btn-tab3" class="tab-btn px-4 py-3 rounded-xl border border-slate-800 bg-slate-900 text-xs md:text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
+                <span>⚖️</span> 2. Equilibrio de Corrientes (Jtotal = 0)
+            </button>
+            <button onclick="switchTab('tab2')" id="btn-tab2" class="tab-btn px-4 py-3 rounded-xl border border-slate-800 bg-slate-900 text-xs md:text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
+                <span>📊</span> 3. Perfiles Electrostáticos & Bandas
+            </button>
+            <button onclick="switchTab('tab4')" id="btn-tab4" class="tab-btn px-4 py-3 rounded-xl border border-slate-800 bg-slate-900 text-xs md:text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
+                <span>⚡</span> 4. Potencial ϕ(x), Barrera Vbi y Asimetría
+            </button>
+        </div>
+
+        <!-- ================= PESTAÑA 1: DINÁMICA SECUENCIAL ================= -->
+        <section id="content-tab1" class="tab-content grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-sky-400 mb-4 flex items-center gap-2">⚙️ Control del Experimento</h3>
+
+                    <div class="mb-3">
+                        <div class="flex justify-between mb-1">
+                            <label class="text-xs font-semibold text-slate-300">Dopaje Lado P (Na):</label>
+                            <span class="text-sm font-mono text-rose-400 font-bold" id="t1-na-val">10¹⁶ cm⁻³</span>
+                        </div>
+                        <input type="range" id="t1-na" min="14" max="18" step="0.2" value="16" class="w-full accent-rose-500">
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="flex justify-between mb-1">
+                            <label class="text-xs font-semibold text-slate-300">Dopaje Lado N (Nd):</label>
+                            <span class="text-sm font-mono text-sky-400 font-bold" id="t1-nd-val">10¹⁵ cm⁻³</span>
+                        </div>
+                        <input type="range" id="t1-nd" min="14" max="18" step="0.2" value="15" class="w-full accent-sky-500">
+                    </div>
+
+                    <div class="mb-5">
+                        <div class="flex justify-between mb-1">
+                            <label class="text-xs font-semibold text-slate-300">Temperatura (T):</label>
+                            <span class="text-sm font-mono text-amber-400 font-bold" id="t1-t-val">300 K</span>
+                        </div>
+                        <input type="range" id="t1-t" min="200" max="450" step="25" value="300" class="w-full accent-amber-500">
+                    </div>
+
+                    <div class="space-y-2 mb-4">
+                        <button onclick="startCompleteProcess()" class="w-full py-3 bg-gradient-to-r from-sky-600 to-emerald-600 hover:from-sky-500 hover:to-emerald-500 text-white font-extrabold rounded-xl transition shadow-lg flex justify-center items-center gap-2 text-xs md:text-sm uppercase tracking-wide">
+                            <span>🎬</span> Ejecutar Secuencia Completa
+                        </button>
+                        <div class="grid grid-cols-3 gap-1.5 text-[10px] font-bold text-center">
+                            <button onclick="setStage(0)" class="py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 border border-slate-700">1. Neutro</button>
+                            <button onclick="setStage(1)" class="py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 border border-slate-700">2. Difusión</button>
+                            <button onclick="setStage(2)" class="py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 border border-slate-700">3. Equilibrio</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono space-y-1.5">
+                    <div class="text-slate-400 font-bold text-[10px] border-b border-slate-900 pb-1 uppercase">Estado Físico en Equilibrio</div>
+                    <div class="flex justify-between border-b border-slate-900 pb-1">
+                        <span class="text-slate-500">Barrera Vbi:</span>
+                        <span class="text-amber-400 font-bold" id="t1-vbi-calc">0.655 V</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-900 pb-1">
+                        <span class="text-slate-500">Penetración P (xp0):</span>
+                        <span class="text-cyan-400 font-bold" id="t1-xp0-calc">0.026 μm</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-900 pb-1">
+                        <span class="text-slate-500">Penetración N (xn0):</span>
+                        <span class="text-rose-400 font-bold" id="t1-xn0-calc">0.264 μm</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Ancho Total ZCE (W0):</span>
+                        <span class="text-emerald-400 font-bold" id="t1-w0-calc">0.290 μm</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-8 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                    <div>
+                        <h4 class="font-bold text-white text-sm">Secuencia Físico-Temporal de la Juntura</h4>
+                        <span id="t1-stage-label" class="text-xs text-sky-400 font-semibold">Paso 1: Concentración de mayoritarios en cada región neutra</span>
+                    </div>
+                    <span id="t1-status-tag" class="text-xs px-2.5 py-1 rounded bg-slate-950 text-slate-300 border border-slate-700 font-mono">Estado Inicial</span>
+                </div>
+
+                <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center" style="height: 480px;">
+                    <canvas id="t1-canvas" width="650" height="470" class="w-full h-full max-w-[650px]"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PESTAÑA 2: EQUILIBRIO DE CORRIENTES MEJORADA ================= -->
+        <section id="content-tab3" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-amber-400 mb-4 flex items-center gap-2">⚖️ Balance Térmico de Corrientes</h3>
+
+                    <div class="mb-3">
+                        <div class="flex justify-between mb-1">
+                            <label class="text-xs font-semibold text-slate-300">Dopaje Lado P (Na):</label>
+                            <span class="text-sm font-mono text-rose-400 font-bold" id="t3-na-val">10¹⁶ cm⁻³</span>
+                        </div>
+                        <input type="range" id="t3-na" min="14" max="18" step="0.2" value="16" class="w-full accent-rose-500">
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="flex justify-between mb-1">
+                            <label class="text-xs font-semibold text-slate-300">Dopaje Lado N (Nd):</label>
+                            <span class="text-sm font-mono text-sky-400 font-bold" id="t3-nd-val">10¹⁵ cm⁻³</span>
+                        </div>
+                        <input type="range" id="t3-nd" min="14" max="18" step="0.2" value="15" class="w-full accent-sky-500">
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1">
+                            <label class="text-xs font-semibold text-slate-300">Temperatura (T):</label>
+                            <span class="text-sm font-mono text-amber-400 font-bold" id="t3-t-val">300 K</span>
+                        </div>
+                        <input type="range" id="t3-t" min="200" max="450" step="25" value="300" class="w-full accent-amber-500">
+                    </div>
+
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono space-y-2">
+                        <div class="text-slate-400 font-bold text-[10px] border-b border-slate-900 pb-1 uppercase">Minorías Térmicas (ni² / Dopaje)</div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Huecos en N (p0n):</span>
+                            <span class="text-rose-400 font-bold" id="t3-p0n-val">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Electrones en P (n0p):</span>
+                            <span class="text-sky-400 font-bold" id="t3-n0p-val">--</span>
+                        </div>
+                        <div class="border-t border-slate-900 pt-1 flex justify-between">
+                            <span class="text-slate-500">Jdiff (Difusión):</span>
+                            <span class="text-emerald-400 font-bold" id="t3-jdiff-val">+0.00 μA/cm²</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Jdrift (Arrastre Eint):</span>
+                            <span class="text-rose-400 font-bold" id="t3-jdrift-val">-0.00 μA/cm²</span>
+                        </div>
+                        <div class="flex justify-between border-t border-slate-900 pt-1">
+                            <span class="text-slate-300 font-bold">Jtotal Neto:</span>
+                            <span class="text-yellow-400 font-extrabold">0.000 A/cm²</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-[11px] text-slate-400 italic mt-4 bg-slate-950/60 p-3 rounded-xl border border-slate-900 leading-relaxed">
+                    <strong>Principio de Cancelación Detallada:</strong> A mayor temperatura $T$, se generan más pares térmicos minoritarios que son arrastrados ($J_{drift} \uparrow$), pero simultáneamente más mayoritarios logran superar la barrera por difusión ($J_{diff} \uparrow$). Ambas corrientes crecen a la par y se cancelan punto a punto.
+                </div>
+            </div>
+
+            <div class="lg:col-span-8 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 space-y-3">
+                <div class="flex justify-between items-center">
+                    <h4 class="font-bold text-white text-sm">Visualización Dinámica del Balance: Difusión de Mayoritarios vs. Arrastre de Minoritarios</h4>
+                    <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-mono">dEF/dx = 0</span>
+                </div>
+
+                <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center" style="height: 440px;">
+                    <canvas id="t3-canvas" width="650" height="430" class="w-full h-full max-w-[650px]"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PESTAÑA 3: PERFILES ELECTROSTÁTICOS & BANDAS ================= -->
+        <section id="content-tab2" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-sky-400 mb-4 flex items-center gap-2">⚙️ Controles de Integración</h3>
+
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1">
+                            <label class="text-xs font-semibold text-slate-300">Na (Lado P):</label>
+                            <span class="text-sm font-mono text-rose-400 font-bold" id="t2-na-val">10¹⁶ cm⁻³</span>
+                        </div>
+                        <input type="range" id="t2-na" min="14" max="18" step="0.2" value="16" class="w-full accent-rose-500">
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1">
+                            <label class="text-xs font-semibold text-slate-300">Nd (Lado N):</label>
+                            <span class="text-sm font-mono text-sky-400 font-bold" id="t2-nd-val">10¹⁵ cm⁻³</span>
+                        </div>
+                        <input type="range" id="t2-nd" min="14" max="18" step="0.2" value="15" class="w-full accent-sky-500">
+                    </div>
+
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono space-y-2">
+                        <div class="text-slate-400 font-bold text-[10px] border-b border-slate-900 pb-1 uppercase">Soluciones Ecuación de Poisson</div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Campo Máx (|Emax|):</span>
+                            <span class="text-amber-400 font-bold" id="t2-emax-calc">-45.2 kV/cm</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Barrera Térmica (Vbi):</span>
+                            <span class="text-emerald-400 font-bold" id="t2-vbi-calc">0.655 V</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Nivel de Fermi (EF):</span>
+                            <span class="text-pink-400 font-bold">Plano (\(dE_F/dx = 0\))</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs space-y-2 mt-4">
+                    <div class="text-slate-300 font-bold uppercase text-[11px] border-b border-slate-800 pb-1">Leyenda de Niveles de Energía:</div>
+                    <div class="flex items-center gap-2"><span class="w-3 h-1 bg-sky-400 inline-block rounded"></span><span class="text-slate-300 font-mono"><strong class="text-sky-400">Ec</strong>: Conducción</span></div>
+                    <div class="flex items-center gap-2"><span class="w-3 h-0.5 bg-slate-400 inline-block border-t border-dashed border-slate-300"></span><span class="text-slate-300 font-mono"><strong class="text-slate-300">Ei</strong>: Intrínseco</span></div>
+                    <div class="flex items-center gap-2"><span class="w-3 h-1 bg-purple-400 inline-block rounded"></span><span class="text-slate-300 font-mono"><strong class="text-purple-400">Ev</strong>: Valencia</span></div>
+                    <div class="flex items-center gap-2"><span class="w-3 h-1 bg-rose-500 inline-block rounded"></span><span class="text-slate-300 font-mono"><strong class="text-rose-400">EF</strong>: Fermi constante</span></div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-8 space-y-6">
+                <div class="bg-slate-900/60 p-5 rounded-2xl border border-slate-800">
+                    <h4 class="font-bold text-white mb-2 text-sm">1. Perfiles Electrostáticos: \(\rho(x)\), \(\mathcal{E}(x)\) y \(\phi(x)\)</h4>
+                    <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center" style="height: 270px;">
+                        <canvas id="t2-canvas-electro" width="650" height="260" class="w-full h-full max-w-[650px]"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/60 p-5 rounded-2xl border border-slate-800">
+                    <h4 class="font-bold text-white mb-2 text-sm">2. Diagrama de Bandas de Energía \(E\) [eV] con Nivel \(E_F\) Continuo</h4>
+                    <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center" style="height: 250px;">
+                        <canvas id="t2-canvas-bands" width="650" height="240" class="w-full h-full max-w-[650px]"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PESTAÑA 4: POTENCIAL ϕ(x) ================= -->
+        <section id="content-tab4" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-emerald-400 mb-4 flex items-center gap-2">⚡ Distribución del Potencial \(\phi(x)\)</h3>
+
+                    <div class="mb-3">
+                        <div class="flex justify-between mb-1">
+                            <label class="text-xs font-semibold text-slate-300">Na (Lado P):</label>
+                            <span class="text-sm font-mono text-rose-400 font-bold" id="t4-na-val">10¹⁷ cm⁻³</span>
+                        </div>
+                        <input type="range" id="t4-na" min="14" max="18" step="0.2" value="17" class="w-full accent-rose-500">
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="flex justify-between mb-1">
+                            <label class="text-xs font-semibold text-slate-300">Nd (Lado N):</label>
+                            <span class="text-sm font-mono text-sky-400 font-bold" id="t4-nd-val">10¹⁵ cm⁻³</span>
+                        </div>
+                        <input type="range" id="t4-nd" min="14" max="18" step="0.2" value="15" class="w-full accent-sky-500">
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1">
+                            <label class="text-xs font-semibold text-slate-300">Temperatura (T):</label>
+                            <span class="text-sm font-mono text-amber-400 font-bold" id="t4-t-val">300 K</span>
+                        </div>
+                        <input type="range" id="t4-t" min="200" max="450" step="25" value="300" class="w-full accent-amber-500">
+                    </div>
+
+                    <div class="bg-slate-950 p-3 rounded-xl border border-emerald-900/50 mb-3">
+                        <div class="flex justify-between mb-1">
+                            <label class="text-xs font-bold text-emerald-400 uppercase">Sonda de Posición (\(x\)):</label>
+                            <span class="text-xs font-mono text-emerald-300 font-bold" id="t4-xpos-val">0.000 μm</span>
+                        </div>
+                        <input type="range" id="t4-xpos-slider" min="-100" max="100" value="0" class="w-full accent-emerald-400">
+                    </div>
+
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono space-y-2">
+                        <div class="text-slate-400 font-bold text-[10px] border-b border-slate-900 pb-1 uppercase">Lectura Instantánea</div>
+                        <div class="flex justify-between"><span class="text-slate-500">Potencial \(\phi(x)\):</span><span class="text-emerald-400 font-bold" id="t4-phi-x-out">0.000 V</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Ecuación activa:</span><span class="text-sky-300 font-bold" id="t4-tramo-out">Unión metalúrgica</span></div>
+                        <div class="border-t border-slate-900 pt-1 flex justify-between"><span class="text-slate-500">Caída en P (\(V_{bi,p}\)):</span><span class="text-rose-400 font-bold" id="t4-vbip-out">0.000 V</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Caída en N (\(V_{bi,n}\)):</span><span class="text-cyan-400 font-bold" id="t4-vbin-out">0.000 V</span></div>
+                        <div class="flex justify-between border-t border-slate-900 pt-1"><span class="text-slate-500">Barrera Total (\(V_{bi}\)):</span><span class="text-amber-400 font-bold" id="t4-vbi-out">0.000 V</span></div>
+                    </div>
+                </div>
+
+                <div class="text-[11px] text-slate-400 italic mt-3 bg-slate-950/60 p-3 rounded-xl border border-slate-900 leading-relaxed">
+                    <strong>Ecuación de Poisson:</strong> \(\frac{d^2\phi}{dx^2} = -\frac{\rho}{\epsilon}\).<br>
+                    La mayor parte del ancho de vaciamiento penetra en la región de menor dopaje.
+                </div>
+            </div>
+
+            <div class="lg:col-span-8 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="font-bold text-white text-sm">Perfil Completo de Potencial Electrostático \(\phi(x)\)</h4>
+                    <span class="text-xs px-2.5 py-1 rounded bg-slate-950 text-emerald-400 border border-emerald-900/50 font-mono">Curvatura parabólica</span>
+                </div>
+                <div class="relative bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center p-2" style="height: 420px;">
+                    <canvas id="t4-canvas" width="650" height="400" class="w-full h-full max-w-[650px]"></canvas>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const q = 1.602e-19;
+        const k = 8.617e-5;
+        const eps0 = 8.854e-14;
+        const eps_si = 11.8 * eps0;
+        const Nc300 = 2.8e19;
+        const Nv300 = 1.04e19;
+
+        function calcPhysics(Na, Nd, T) {
+            const Eg = 1.17 - (4.73e-4 * T * T) / (T + 636);
+            const Nc = Nc300 * Math.pow(T / 300, 1.5);
+            const Nv = Nv300 * Math.pow(T / 300, 1.5);
+            const ni = Math.sqrt(Nc * Nv) * Math.exp(-Eg / (2 * k * T));
+
+            const Vt = (k * T);
+            const Vbi = Vt * Math.log((Na * Nd) / (ni * ni));
+
+            const W0 = Math.sqrt((2 * eps_si * (Na + Nd) * Vbi) / (q * Na * Nd));
+            const xp0 = W0 * (Nd / (Na + Nd));
+            const xn0 = W0 * (Na / (Na + Nd));
+            const Emax = -(2 * Vbi) / W0;
+
+            const vbi_p = (q * Na * xp0 * xp0) / (2 * eps_si);
+            const vbi_n = (q * Nd * xn0 * xn0) / (2 * eps_si);
+
+            const p0n = (ni * ni) / Nd;
+            const n0p = (ni * ni) / Na;
+
+            return { Na, Nd, ni, Vt, Vbi, W0, xp0, xn0, Emax, vbi_p, vbi_n, eps_si, Eg, p0n, n0p };
+        }
+
+        let activeTab = 'tab1';
+
+        function switchTab(tabId) {
+            activeTab = tabId;
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+            document.getElementById(`btn-${tabId}`).classList.add('active');
+
+            if (tabId === 'tab1') updateT1();
+            if (tabId === 'tab2') updateT2();
+            if (tabId === 'tab3') updateT3();
+            if (tabId === 'tab4') updateT4();
+        }
+
+        // ================= SECUENCIA PESTAÑA 1 =================
+        let simStage = 2;
+        let dopantsP = [];
+        let dopantsN = [];
+        let freeParticles = [];
+        let flashes = [];
+        let stageTimer = null;
+
+        function initStageParticles(Na_log, Nd_log) {
+            dopantsP = [];
+            dopantsN = [];
+            freeParticles = [];
+            flashes = [];
+            const midX = 325;
+
+            const rows = 4;
+            const cols = 5;
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const atomX_P = midX - 30 - c * 52;
+                    const atomY_P = 45 + r * 38;
+                    dopantsP.push({
+                        x: atomX_P, y: atomY_P, distToJunction: midX - atomX_P,
+                        carrierX: atomX_P + 12, carrierY: atomY_P, ionized: false, recombined: false
+                    });
+
+                    const atomX_N = midX + 30 + c * 52;
+                    const atomY_N = 45 + r * 38;
+                    dopantsN.push({
+                        x: atomX_N, y: atomY_N, distToJunction: atomX_N - midX,
+                        carrierX: atomX_N - 12, carrierY: atomY_N, ionized: false, recombined: false
+                    });
+                }
+            }
+
+            const countP = Math.round(18 + (Na_log - 14) * 8);
+            const countN = Math.round(18 + (Nd_log - 14) * 8);
+
+            for (let i = 0; i < countP; i++) {
+                freeParticles.push({
+                    x: 25 + Math.random() * (midX - 35),
+                    y: 280 + Math.random() * 125,
+                    vx: (Math.random() - 0.5) * 1.5,
+                    vy: (Math.random() - 0.5) * 1.5,
+                    type: 'hole', recombined: false
+                });
+            }
+
+            for (let i = 0; i < countN; i++) {
+                freeParticles.push({
+                    x: midX + 10 + Math.random() * (midX - 35),
+                    y: 280 + Math.random() * 125,
+                    vx: (Math.random() - 0.5) * 1.5,
+                    vy: (Math.random() - 0.5) * 1.5,
+                    type: 'electron', recombined: false
+                });
+            }
+        }
+
+        function setStage(stage) {
+            if (stageTimer) clearTimeout(stageTimer);
+            simStage = stage;
+            const Na_log = parseFloat(document.getElementById('t1-na').value);
+            const Nd_log = parseFloat(document.getElementById('t1-nd').value);
+            initStageParticles(Na_log, Nd_log);
+
+            const tag = document.getElementById('t1-status-tag');
+            const label = document.getElementById('t1-stage-label');
+
+            if (stage === 0) {
+                tag.textContent = "1. Neutro: Mayoritarios";
+                tag.className = "text-xs px-2.5 py-1 rounded bg-slate-900 text-slate-300 border border-slate-700 font-mono";
+                label.textContent = "Paso 1: Regiones neutras aisladas con sus portadores mayoritarios en equilibrio (Eint = 0)";
+            } else if (stage === 1) {
+                tag.textContent = "2. Difusión y Aniquilación";
+                tag.className = "text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-mono";
+                label.textContent = "Paso 2: Difusión masiva por gradiente hacia x=0 con recombinación inmediata";
+            } else {
+                tag.textContent = "3. ZCE en Equilibrio";
+                tag.className = "text-xs px-2.5 py-1 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono";
+                label.textContent = "Paso 3: Iones fijos expuestos generan la ZCE y el campo Eint detiene el flujo neto";
+            }
+        }
+
+        function startCompleteProcess() {
+            setStage(0);
+            stageTimer = setTimeout(() => {
+                setStage(1);
+                stageTimer = setTimeout(() => {
+                    setStage(2);
+                }, 3500);
+            }, 2500);
+        }
+
+        function updateT1() {
+            const Na_log = parseFloat(document.getElementById('t1-na').value);
+            const Nd_log = parseFloat(document.getElementById('t1-nd').value);
+            const T = parseFloat(document.getElementById('t1-t').value);
+
+            document.getElementById('t1-na-val').textContent = `10^{${Na_log.toFixed(1)}} cm⁻³`;
+            document.getElementById('t1-nd-val').textContent = `10^{${Nd_log.toFixed(1)}} cm⁻³`;
+            document.getElementById('t1-t-val').textContent = `${T} K`;
+
+            const phys = calcPhysics(Math.pow(10, Na_log), Math.pow(10, Nd_log), T);
+
+            document.getElementById('t1-vbi-calc').textContent = `${phys.Vbi.toFixed(3)} V`;
+            document.getElementById('t1-xp0-calc').textContent = `${(phys.xp0 * 1e4).toFixed(3)} μm`;
+            document.getElementById('t1-xn0-calc').textContent = `${(phys.xn0 * 1e4).toFixed(3)} μm`;
+            document.getElementById('t1-w0-calc').textContent = `${(phys.W0 * 1e4).toFixed(3)} μm`;
+
+            drawT1Canvas(phys);
+        }
+
+        function drawT1Canvas(phys) {
+            const canvas = document.getElementById('t1-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const midX = canvas.width / 2;
+
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.6)';
+            ctx.fillRect(20, 15, canvas.width - 40, 205);
+            ctx.strokeStyle = '#1e293b';
+            ctx.strokeRect(20, 15, canvas.width - 40, 205);
+
+            ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 11px sans-serif';
+            ctx.fillText('A. Red Cristalina: Átomos Dopantes (Aceptor B y Donor P)', 30, 32);
+
+            ctx.strokeStyle = '#334155'; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+            ctx.beginPath(); ctx.moveTo(midX, 38); ctx.lineTo(midX, 215); ctx.stroke();
+            ctx.setLineDash([]);
+
+            const maxMicroXP = 180 * (phys.xp0 / phys.W0) * 1.6;
+            const maxMicroXN = 180 * (phys.xn0 / phys.W0) * 1.6;
+
+            const curMicroXP = simStage === 0 ? 0 : (simStage === 1 ? maxMicroXP * 0.45 : maxMicroXP);
+            const curMicroXN = simStage === 0 ? 0 : (simStage === 1 ? maxMicroXN * 0.45 : maxMicroXN);
+
+            dopantsP.forEach(d => {
+                const isIonized = simStage > 0 && d.distToJunction <= curMicroXP;
+
+                ctx.beginPath();
+                ctx.arc(d.x, d.y, 11, 0, Math.PI * 2);
+                if (isIonized) {
+                    ctx.fillStyle = 'rgba(6, 182, 212, 0.25)'; ctx.fill();
+                    ctx.strokeStyle = '#06b6d4'; ctx.lineWidth = 2; ctx.stroke();
+                    ctx.fillStyle = '#22d3ee'; ctx.font = 'bold 11px monospace';
+                    ctx.fillText('–', d.x - 3, d.y + 4);
+                } else {
+                    ctx.fillStyle = '#1e293b'; ctx.fill();
+                    ctx.strokeStyle = '#475569'; ctx.lineWidth = 1.5; ctx.stroke();
+                    ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 9px monospace';
+                    ctx.fillText('B', d.x - 3, d.y + 3);
+                }
+
+                if (isIonized) {
+                    if (simStage === 1) {
+                        d.carrierX += 2.2;
+                        if (d.carrierX >= midX) {
+                            d.carrierX = midX;
+                            flashes.push({ x: midX, y: d.y, alpha: 1.0 });
+                        }
+                    } else if (simStage === 2) {
+                        d.recombined = true;
+                    }
+                } else {
+                    d.carrierX = d.x + 13 + Math.cos(Date.now() * 0.006 + d.x) * 3;
+                    d.carrierY = d.y + Math.sin(Date.now() * 0.006 + d.y) * 3;
+                }
+
+                if (!d.recombined) {
+                    ctx.beginPath(); ctx.arc(d.carrierX, d.carrierY, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = '#f43f5e'; ctx.fill();
+                    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1; ctx.stroke();
+                }
+            });
+
+            dopantsN.forEach(d => {
+                const isIonized = simStage > 0 && d.distToJunction <= curMicroXN;
+
+                ctx.beginPath();
+                ctx.arc(d.x, d.y, 11, 0, Math.PI * 2);
+                if (isIonized) {
+                    ctx.fillStyle = 'rgba(239, 68, 68, 0.25)'; ctx.fill();
+                    ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2; ctx.stroke();
+                    ctx.fillStyle = '#f87171'; ctx.font = 'bold 11px monospace';
+                    ctx.fillText('+', d.x - 3, d.y + 4);
+                } else {
+                    ctx.fillStyle = '#1e293b'; ctx.fill();
+                    ctx.strokeStyle = '#475569'; ctx.lineWidth = 1.5; ctx.stroke();
+                    ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 9px monospace';
+                    ctx.fillText('P', d.x - 3, d.y + 3);
+                }
+
+                if (isIonized) {
+                    if (simStage === 1) {
+                        d.carrierX -= 2.2;
+                        if (d.carrierX <= midX) {
+                            d.carrierX = midX;
+                            flashes.push({ x: midX, y: d.y, alpha: 1.0 });
+                        }
+                    } else if (simStage === 2) {
+                        d.recombined = true;
+                    }
+                } else {
+                    d.carrierX = d.x - 13 + Math.cos(Date.now() * 0.006 + d.x) * 3;
+                    d.carrierY = d.y + Math.sin(Date.now() * 0.006 + d.y) * 3;
+                }
+
+                if (!d.recombined) {
+                    ctx.beginPath(); ctx.arc(d.carrierX, d.carrierY, 3.5, 0, Math.PI * 2);
+                    ctx.fillStyle = '#38bdf8'; ctx.fill();
+                }
+            });
+
+            for (let i = flashes.length - 1; i >= 0; i--) {
+                const f = flashes[i];
+                ctx.beginPath();
+                ctx.arc(f.x, f.y, 12 * (1.6 - f.alpha), 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(250, 204, 21, ${f.alpha})`;
+                ctx.fill();
+                f.alpha -= 0.06;
+                if (f.alpha <= 0) flashes.splice(i, 1);
+            }
+
+            const macroY = 270;
+            const macroH = 150;
+
+            ctx.fillStyle = '#1e1b4b'; ctx.fillRect(20, macroY, midX - 20, macroH);
+            ctx.fillStyle = '#082f49'; ctx.fillRect(midX, macroY, canvas.width - 40 - midX, macroH);
+
+            const scale = 200;
+            const xp_pix = Math.min(midX - 40, phys.xp0 * 1e4 * scale);
+            const xn_pix = Math.min(canvas.width - midX - 40, phys.xn0 * 1e4 * scale);
+
+            let cur_xp = 0;
+            let cur_xn = 0;
+
+            if (simStage === 1) {
+                cur_xp = xp_pix * 0.45;
+                cur_xn = xn_pix * 0.45;
+            } else if (simStage === 2) {
+                cur_xp = xp_pix;
+                cur_xn = xn_pix;
+            }
+
+            if (simStage > 0) {
+                ctx.fillStyle = '#020617';
+                ctx.fillRect(midX - cur_xp, macroY, cur_xp + cur_xn, macroH);
+                ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 1.5;
+                ctx.strokeRect(midX - cur_xp, macroY, cur_xp + cur_xn, macroH);
+
+                for (let x = midX - cur_xp + 12; x < midX; x += 20) {
+                    for (let y = macroY + 25; y < macroY + macroH - 15; y += 30) {
+                        ctx.fillStyle = '#06b6d4'; ctx.beginPath(); ctx.arc(x, y, 7, 0, Math.PI*2); ctx.fill();
+                        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 9px monospace'; ctx.fillText('-', x-3, y+3);
+                    }
+                }
+
+                for (let x = midX + 12; x < midX + cur_xn - 5; x += 20) {
+                    for (let y = macroY + 25; y < macroY + macroH - 15; y += 30) {
+                        ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(x, y, 7, 0, Math.PI*2); ctx.fill();
+                        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 9px monospace'; ctx.fillText('+', x-3, y+3);
+                    }
+                }
+            }
+
+            freeParticles.forEach(p => {
+                if (simStage === 0) {
+                    p.x += p.vx; p.y += p.vy;
+                    if (p.type === 'hole') {
+                        if (p.x < 30 || p.x > midX - 8) p.vx *= -1;
+                    } else {
+                        if (p.x < midX + 8 || p.x > canvas.width - 30) p.vx *= -1;
+                    }
+                    if (p.y < macroY + 10 || p.y > macroY + macroH - 10) p.vy *= -1;
+                } else if (simStage === 1) {
+                    if (p.type === 'hole') p.x += 1.8;
+                    else p.x -= 1.8;
+
+                    if (Math.abs(p.x - midX) < 8 && !p.recombined) {
+                        p.recombined = true;
+                        flashes.push({ x: midX, y: p.y, alpha: 1.0 });
+                    }
+                } else if (simStage === 2) {
+                    if (p.type === 'hole') {
+                        if (p.x > midX - cur_xp) p.x = 35 + Math.random() * (midX - cur_xp - 40);
+                    } else {
+                        if (p.x < midX + cur_xn) p.x = midX + cur_xn + 10 + Math.random() * 80;
+                    }
+                }
+
+                if (!p.recombined) {
+                    if (simStage < 2 || (p.type === 'hole' && p.x < midX - cur_xp) || (p.type === 'electron' && p.x > midX + cur_xn)) {
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
+                        ctx.fillStyle = p.type === 'hole' ? '#f43f5e' : '#38bdf8';
+                        ctx.fill();
+                    }
+                }
+            });
+
+            if (simStage === 2 && cur_xp + cur_xn > 20) {
+                const arrowY = macroY + macroH / 2;
+                ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(midX + cur_xn - 10, arrowY);
+                ctx.lineTo(midX - cur_xp + 10, arrowY);
+                ctx.stroke();
+
+                ctx.fillStyle = '#f59e0b'; ctx.beginPath();
+                ctx.moveTo(midX - cur_xp + 10, arrowY);
+                ctx.lineTo(midX - cur_xp + 22, arrowY - 6);
+                ctx.lineTo(midX - cur_xp + 22, arrowY + 6);
+                ctx.fill();
+
+                ctx.font = 'bold 11px sans-serif';
+                ctx.fillText('Campo Interno Eint (Frena Difusión)', midX - 95, arrowY - 12);
+            }
+
+            ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 11px sans-serif';
+            ctx.fillText('B. Nivel Macroscópico: Concentraciones de Mayoritarios y Formación de la ZCE', 30, macroY - 10);
+            ctx.fillStyle = '#f43f5e'; ctx.fillText('Región P: pp0 ≈ Na (Huecos)', 35, macroY + 20);
+            ctx.fillStyle = '#38bdf8'; ctx.fillText('Región N: nn0 ≈ Nd (Electrones)', canvas.width - 180, macroY + 20);
+            ctx.fillStyle = '#64748b'; ctx.fillText('x = 0 (Unión)', midX - 30, macroY + macroH + 18);
+        }
+
+        setInterval(() => {
+            if (activeTab === 'tab1') updateT1();
+        }, 30);
+
+        // ================= PESTAÑA 2: EQUILIBRIO RIGUROSO (ID tab3) =================
+        let t3Particles = [];
+        let t3GenPairs = [];
+
+        function initT3Dynamics() {
+            t3Particles = [];
+            t3GenPairs = [];
+            const midX = 325;
+
+            // Mayoritarios que intentan difundir cruzando la barrera
+            for (let i = 0; i < 15; i++) {
+                t3Particles.push({
+                    x: 40 + Math.random() * (midX - 80),
+                    y: 75 + Math.random() * 90,
+                    vx: Math.random() * 1.5 + 0.8,
+                    type: 'diff_hole',
+                    energy: Math.random() // Sólo si energy > 0.85 superan la barrera
+                });
+                t3Particles.push({
+                    x: midX + 80 + Math.random() * (midX - 120),
+                    y: 75 + Math.random() * 90,
+                    vx: -(Math.random() * 1.5 + 0.8),
+                    type: 'diff_electron',
+                    energy: Math.random()
+                });
+            }
+        }
+
+        function updateT3() {
+            const Na_log = parseFloat(document.getElementById('t3-na').value);
+            const Nd_log = parseFloat(document.getElementById('t3-nd').value);
+            const T = parseFloat(document.getElementById('t3-t').value);
+
+            document.getElementById('t3-na-val').textContent = `10^{${Na_log.toFixed(1)}} cm⁻³`;
+            document.getElementById('t3-nd-val').textContent = `10^{${Nd_log.toFixed(1)}} cm⁻³`;
+            document.getElementById('t3-t-val').textContent = `${T} K`;
+
+            const phys = calcPhysics(Math.pow(10, Na_log), Math.pow(10, Nd_log), T);
+
+            document.getElementById('t3-p0n-val').textContent = `${phys.p0n.toExponential(2)} cm⁻³`;
+            document.getElementById('t3-n0p-val').textContent = `${phys.n0p.toExponential(2)} cm⁻³`;
+
+            // Módulo de corriente en equilibrio proporcional a T y minorías
+            const jMag = (1.5 * Math.pow(T / 300, 2) * (phys.ni / 1e10)).toFixed(2);
+            document.getElementById('t3-jdiff-val').textContent = `+${jMag} μA/cm²`;
+            document.getElementById('t3-jdrift-val').textContent = `-${jMag} μA/cm²`;
+
+            drawT3Canvas(phys);
+        }
+
+        function drawT3Canvas(phys) {
+            const canvas = document.getElementById('t3-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const midX = canvas.width / 2;
+            const barY = 50, barH = 170;
+
+            const scale = 180;
+            const xp_pix = Math.min(midX - 45, Math.max(25, phys.xp0 * 1e4 * scale));
+            const xn_pix = Math.min(canvas.width - midX - 45, Math.max(25, phys.xn0 * 1e4 * scale));
+
+            // 1. Bloques de silicio
+            ctx.fillStyle = '#1e1b4b'; ctx.fillRect(30, barY, midX - 30, barH);
+            ctx.fillStyle = '#082f49'; ctx.fillRect(midX, barY, canvas.width - 60 - midX, barH);
+
+            // ZCE Desierta con Campo Eléctrico
+            ctx.fillStyle = '#020617';
+            ctx.fillRect(midX - xp_pix, barY, xp_pix + xn_pix, barH);
+            ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2;
+            ctx.strokeRect(midX - xp_pix, barY, xp_pix + xn_pix, barH);
+
+            // Flecha interna de campo eléctrico Eint
+            ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)'; ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(midX + xn_pix - 10, barY + barH / 2);
+            ctx.lineTo(midX - xp_pix + 10, barY + barH / 2);
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(245, 158, 11, 0.8)';
+            ctx.fillText('Eint (Arrastre)', midX - 35, barY + barH / 2 - 8);
+
+            // Guías verticales
+            ctx.strokeStyle = '#334155'; ctx.setLineDash([3, 3]);
+            ctx.beginPath(); ctx.moveTo(midX - xp_pix, barY); ctx.lineTo(midX - xp_pix, barY + barH); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(midX + xn_pix, barY); ctx.lineTo(midX + xn_pix, barY + barH); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(midX, barY); ctx.lineTo(midX, barY + barH); ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 10px monospace';
+            ctx.fillText('-xp0', midX - xp_pix - 12, barY - 8);
+            ctx.fillText('x=0', midX - 8, barY - 8);
+            ctx.fillText('+xn0', midX + xn_pix - 10, barY - 8);
+
+            // Generación térmica espontánea dentro de la ZCE (Drift / Arrastre)
+            if (Math.random() < 0.06) {
+                const genX = (midX - xp_pix + 10) + Math.random() * (xp_pix + xn_pix - 20);
+                const genY = barY + 30 + Math.random() * (barH - 60);
+                t3GenPairs.push({
+                    hx: genX, hy: genY,
+                    ex: genX, ey: genY,
+                    life: 1.0
+                });
+            }
+
+            // Animar y dibujar pares generados térmicamente (Arrastre)
+            for (let i = t3GenPairs.length - 1; i >= 0; i--) {
+                const p = t3GenPairs[i];
+                // El campo eléctrico Eint empuja huecos hacia la IZQUIERDA (a región P)
+                p.hx -= 3.2;
+                // y empuja electrones hacia la DERECHA (a región N)
+                p.ex += 3.2;
+
+                // Hueco arrastrado (rojo)
+                ctx.beginPath(); ctx.arc(p.hx, p.hy, 3.5, 0, Math.PI*2);
+                ctx.fillStyle = '#f43f5e'; ctx.fill();
+
+                // Electrón arrastrado (azul)
+                ctx.beginPath(); ctx.arc(p.ex, p.ey, 3.5, 0, Math.PI*2);
+                ctx.fillStyle = '#38bdf8'; ctx.fill();
+
+                p.life -= 0.025;
+                if (p.life <= 0 || p.hx < 35 || p.ex > canvas.width - 35) {
+                    t3GenPairs.splice(i, 1);
+                }
+            }
+
+            // Animar portadores de difusión
+            t3Particles.forEach(p => {
+                p.x += p.vx;
+                if (p.type === 'diff_hole') {
+                    // Huecos avanzando a la derecha
+                    if (p.x >= midX - xp_pix) {
+                        if (p.energy > 0.82) {
+                            // Tiene energía térmica para difundir y cruzar
+                            if (p.x > canvas.width - 40) p.x = 40;
+                        } else {
+                            // Es repelido por la barrera de potencial
+                            p.vx *= -1;
+                        }
+                    }
+                    if (p.x < 35) { p.x = 35; p.vx = Math.abs(p.vx); }
+                    ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2);
+                    ctx.fillStyle = '#f43f5e'; ctx.fill();
+                } else {
+                    // Electrones avanzando a la izquierda
+                    if (p.x <= midX + xn_pix) {
+                        if (p.energy > 0.82) {
+                            if (p.x < 40) p.x = canvas.width - 40;
+                        } else {
+                            p.vx *= -1;
+                        }
+                    }
+                    if (p.x > canvas.width - 35) { p.x = canvas.width - 35; p.vx = -Math.abs(p.vx); }
+                    ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2);
+                    ctx.fillStyle = '#38bdf8'; ctx.fill();
+                }
+            });
+
+            // ================= 2. DIAGRAMA VECTORIAL DE CORRIENTES =================
+            const vecY = 280;
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.7)';
+            ctx.fillRect(30, vecY, canvas.width - 60, 130);
+            ctx.strokeStyle = '#1e293b'; ctx.strokeRect(30, vecY, canvas.width - 60, 130);
+
+            ctx.fillStyle = '#ffffff'; ctx.font = 'bold 11px sans-serif';
+            ctx.fillText('Balance Vectorial Dinámico en Todo Punto x', 45, vecY + 22);
+
+            const vecLen = Math.min(180, 50 + (phys.ni / 1e10) * 45);
+
+            // Vector Jdiff (Verde, Difusión neta de P a N)
+            ctx.strokeStyle = '#10b981'; ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(midX - 10, vecY + 55);
+            ctx.lineTo(midX - 10 + vecLen, vecY + 55);
+            ctx.stroke();
+            // Punta flecha derecha
+            ctx.fillStyle = '#10b981'; ctx.beginPath();
+            ctx.moveTo(midX - 10 + vecLen, vecY + 55);
+            ctx.lineTo(midX - 22 + vecLen, vecY + 50);
+            ctx.lineTo(midX - 22 + vecLen, vecY + 60);
+            ctx.fill();
+            ctx.font = 'bold 11px monospace';
+            ctx.fillText(`J_diff (Difusión Mayoritarios) ->`, midX - 10, vecY + 46);
+
+            // Vector Jdrift (Rojo, Arrastre neto de N a P por Eint)
+            ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(midX + 10, vecY + 85);
+            ctx.lineTo(midX + 10 - vecLen, vecY + 85);
+            ctx.stroke();
+            // Punta flecha izquierda
+            ctx.fillStyle = '#ef4444'; ctx.beginPath();
+            ctx.moveTo(midX + 10 - vecLen, vecY + 85);
+            ctx.lineTo(midX + 22 - vecLen, vecY + 80);
+            ctx.lineTo(midX + 22 - vecLen, vecY + 90);
+            ctx.fill();
+            ctx.fillText(`<- J_drift (Arrastre Minoritarios)`, midX - 200, vecY + 80);
+
+            // Ecuación de Cero Neto
+            ctx.fillStyle = '#f59e0b'; ctx.font = 'bold 12px monospace';
+            ctx.fillText('J_total = J_diff + J_drift = 0.000 A/cm²  =>  Nivel de Fermi EF plano', midX - 220, vecY + 115);
+        }
+
+        setInterval(() => {
+            if (activeTab === 'tab3') updateT3();
+        }, 30);
+
+        // ================= PESTAÑA 3: PERFILES Y BANDAS =================
+        function updateT2() {
+            const Na_log = parseFloat(document.getElementById('t2-na').value);
+            const Nd_log = parseFloat(document.getElementById('t2-nd').value);
+
+            document.getElementById('t2-na-val').textContent = `10^{${Na_log.toFixed(1)}} cm⁻³`;
+            document.getElementById('t2-nd-val').textContent = `10^{${Nd_log.toFixed(1)}} cm⁻³`;
+
+            const phys = calcPhysics(Math.pow(10, Na_log), Math.pow(10, Nd_log), 300);
+
+            document.getElementById('t2-emax-calc').textContent = `${(phys.Emax / 1000).toFixed(1)} kV/cm`;
+            document.getElementById('t2-vbi-calc').textContent = `${phys.Vbi.toFixed(3)} V`;
+
+            drawT2ElectroCanvas(phys);
+            drawT2BandsCanvas(phys);
+        }
+
+        function drawT2ElectroCanvas(phys) {
+            const canvas = document.getElementById('t2-canvas-electro');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const midX = canvas.width / 2;
+            const xp_pix = Math.min(140, Math.max(15, phys.xp0 * 1e4 * 220));
+            const xn_pix = Math.min(140, Math.max(15, phys.xn0 * 1e4 * 220));
+
+            ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
+            ctx.beginPath(); ctx.moveTo(midX - xp_pix, 15); ctx.lineTo(midX - xp_pix, 245); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(midX, 15); ctx.lineTo(midX, 245); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(midX + xn_pix, 15); ctx.lineTo(midX + xn_pix, 245); ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.strokeStyle = '#475569'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(50, 45); ctx.lineTo(canvas.width - 40, 45); ctx.stroke();
+            ctx.fillStyle = '#06b6d4'; ctx.fillRect(midX - xp_pix, 45, xp_pix, 20);
+            ctx.fillStyle = '#ef4444'; ctx.fillRect(midX, 25, xn_pix, 20);
+
+            ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 10px monospace';
+            ctx.fillText('ρ(x)', 15, 48);
+            ctx.fillStyle = '#06b6d4'; ctx.fillText('-qNa', midX - xp_pix / 2 - 14, 78);
+            ctx.fillStyle = '#ef4444'; ctx.fillText('+qNd', midX + xn_pix / 2 - 14, 20);
+
+            ctx.strokeStyle = '#475569'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(50, 115); ctx.lineTo(canvas.width - 40, 115); ctx.stroke();
+            ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(midX - xp_pix, 115);
+            ctx.lineTo(midX, 155);
+            ctx.lineTo(midX + xn_pix, 115);
+            ctx.stroke();
+
+            ctx.fillStyle = '#f59e0b'; ctx.font = 'bold 10px sans-serif';
+            ctx.fillText('E(x)', 15, 120);
+            ctx.fillText(`Emax = ${(phys.Emax/1000).toFixed(1)} kV/cm`, midX + 8, 160);
+
+            const y0 = 230;
+            const y_top = 190;
+            const vbi_ratio = phys.vbi_p / phys.Vbi;
+            const y_mid = y0 - (y0 - y_top) * vbi_ratio;
+
+            ctx.strokeStyle = '#475569'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(50, y0); ctx.lineTo(canvas.width - 40, y0); ctx.stroke();
+            ctx.strokeStyle = '#10b981'; ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(50, y0);
+            ctx.lineTo(midX - xp_pix, y0);
+            ctx.quadraticCurveTo(midX - xp_pix/2, y0, midX, y_mid);
+            ctx.quadraticCurveTo(midX + xn_pix/2, y_top, midX + xn_pix, y_top);
+            ctx.lineTo(canvas.width - 40, y_top);
+            ctx.stroke();
+
+            ctx.fillStyle = '#10b981'; ctx.font = 'bold 10px sans-serif';
+            ctx.fillText('ϕ(x)', 15, y0 - 10);
+            ctx.fillText(`Vbi = ${phys.Vbi.toFixed(3)} V`, canvas.width - 95, y_top - 6);
+        }
+
+        function drawT2BandsCanvas(phys) {
+            const canvas = document.getElementById('t2-canvas-bands');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const midX = canvas.width / 2;
+            const xp_pix = Math.min(140, Math.max(15, phys.xp0 * 1e4 * 220));
+            const xn_pix = Math.min(140, Math.max(15, phys.xn0 * 1e4 * 220));
+
+            ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
+            ctx.beginPath(); ctx.moveTo(midX - xp_pix, 15); ctx.lineTo(midX - xp_pix, 225); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(midX, 15); ctx.lineTo(midX, 225); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(midX + xn_pix, 15); ctx.lineTo(midX + xn_pix, 225); ctx.stroke();
+            ctx.setLineDash([]);
+
+            const p_ec = 50,  n_ec = 115;
+            const p_ei = 95,  n_ei = 160;
+            const p_ev = 140, n_ev = 205;
+            const ef_y = 120;
+
+            function drawBandCurve(yP, yN, color, width, dash = []) {
+                ctx.strokeStyle = color; ctx.lineWidth = width; ctx.setLineDash(dash);
+                ctx.beginPath();
+                ctx.moveTo(50, yP);
+                ctx.lineTo(midX - xp_pix, yP);
+                ctx.bezierCurveTo(midX - xp_pix/2, yP, midX + xn_pix/2, yN, midX + xn_pix, yN);
+                ctx.lineTo(canvas.width - 50, yN);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            drawBandCurve(p_ec, n_ec, '#38bdf8', 3);
+            drawBandCurve(p_ei, n_ei, '#94a3b8', 1.5, [4, 4]);
+            drawBandCurve(p_ev, n_ev, '#c084fc', 3);
+
+            ctx.strokeStyle = '#f43f5e'; ctx.lineWidth = 2.5; ctx.beginPath();
+            ctx.moveTo(50, ef_y); ctx.lineTo(canvas.width - 50, ef_y); ctx.stroke();
+
+            ctx.font = 'bold 11px monospace';
+            ctx.fillStyle = '#38bdf8'; ctx.fillText('Ec', 25, p_ec + 4);
+            ctx.fillStyle = '#94a3b8'; ctx.fillText('Ei', 25, p_ei + 4);
+            ctx.fillStyle = '#c084fc'; ctx.fillText('Ev', 25, p_ev + 4);
+            ctx.fillStyle = '#f43f5e'; ctx.fillText('EF', 25, ef_y + 4);
+
+            ctx.fillStyle = '#38bdf8'; ctx.fillText('Ec', canvas.width - 40, n_ec + 4);
+            ctx.fillStyle = '#94a3b8'; ctx.fillText('Ei', canvas.width - 40, n_ei + 4);
+            ctx.fillStyle = '#c084fc'; ctx.fillText('Ev', canvas.width - 40, n_ev + 4);
+            ctx.fillStyle = '#f43f5e'; ctx.fillText('EF', canvas.width - 40, ef_y + 4);
+
+            ctx.fillStyle = 'rgba(244, 63, 94, 0.15)';
+            ctx.strokeStyle = '#f43f5e'; ctx.lineWidth = 1;
+            ctx.fillRect(midX - 120, ef_y - 20, 240, 18);
+            ctx.strokeRect(midX - 120, ef_y - 20, 240, 18);
+            ctx.fillStyle = '#fda4af'; ctx.font = 'bold 10px sans-serif';
+            ctx.fillText('EF CONSTANTE (dEF/dx = 0 en equilibrio)', midX - 110, ef_y - 7);
+
+            const cotaX = canvas.width - 25;
+            ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.moveTo(cotaX, p_ec); ctx.lineTo(cotaX, n_ec); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(cotaX - 3, p_ec); ctx.lineTo(cotaX + 3, p_ec); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(cotaX - 3, n_ec); ctx.lineTo(cotaX + 3, n_ec); ctx.stroke();
+            ctx.fillStyle = '#f59e0b'; ctx.font = 'bold 10px monospace';
+            ctx.fillText('qVbi', cotaX - 30, (p_ec + n_ec) / 2 + 3);
+        }
+
+        // ================= PESTAÑA 4: POTENCIAL ϕ(x) =================
+        function updateT4() {
+            const Na_log = parseFloat(document.getElementById('t4-na').value);
+            const Nd_log = parseFloat(document.getElementById('t4-nd').value);
+            const T = parseFloat(document.getElementById('t4-t').value);
+
+            document.getElementById('t4-na-val').textContent = `10^{${Na_log.toFixed(1)}} cm⁻³`;
+            document.getElementById('t4-nd-val').textContent = `10^{${Nd_log.toFixed(1)}} cm⁻³`;
+            document.getElementById('t4-t-val').textContent = `${T} K`;
+
+            const Na = Math.pow(10, Na_log);
+            const Nd = Math.pow(10, Nd_log);
+            const phys = calcPhysics(Na, Nd, T);
+
+            document.getElementById('t4-vbi-out').textContent = phys.Vbi.toFixed(3) + " V";
+
+            const p_pct = ((phys.vbi_p / phys.Vbi) * 100).toFixed(1);
+            const n_pct = ((phys.vbi_n / phys.Vbi) * 100).toFixed(1);
+            document.getElementById('t4-vbip-out').textContent = `${phys.vbi_p.toFixed(3)} V (${p_pct}%)`;
+            document.getElementById('t4-vbin-out').textContent = `${phys.vbi_n.toFixed(3)} V (${n_pct}%)`;
+
+            const sliderVal = parseFloat(document.getElementById('t4-xpos-slider').value);
+            let probe_x_cm = 0;
+            if (sliderVal < 0) {
+                probe_x_cm = (sliderVal / 100.0) * (phys.xp0 * 1.35);
+            } else {
+                probe_x_cm = (sliderVal / 100.0) * (phys.xn0 * 1.35);
+            }
+            const probe_x_um = probe_x_cm * 1e4;
+            document.getElementById('t4-xpos-val').textContent = `${probe_x_um.toFixed(3)} μm`;
+
+            let phi_x = 0;
+            let tramoText = "";
+
+            if (probe_x_cm <= -phys.xp0) {
+                phi_x = 0;
+                tramoText = "Zona Neutra P: ϕ = 0 V";
+            } else if (probe_x_cm < 0) {
+                phi_x = (q * Na * Math.pow(probe_x_cm + phys.xp0, 2)) / (2 * phys.eps_si);
+                tramoText = "ZCE lado P (Convexa)";
+            } else if (probe_x_cm <= phys.xn0) {
+                phi_x = phys.Vbi - (q * Nd * Math.pow(phys.xn0 - probe_x_cm, 2)) / (2 * phys.eps_si);
+                tramoText = "ZCE lado N (Cóncava)";
+            } else {
+                phi_x = phys.Vbi;
+                tramoText = "Zona Neutra N: ϕ = Vbi";
+            }
+
+            document.getElementById('t4-phi-x-out').textContent = `${phi_x.toFixed(3)} V`;
+            document.getElementById('t4-tramo-out').textContent = tramoText;
+
+            drawT4Canvas(phys, probe_x_cm);
+        }
+
+        function drawT4Canvas(phys, probe_x_cm) {
+            const canvas = document.getElementById('t4-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const midX = canvas.width / 2;
+            const topBarY = 25, barHeight = 45;
+
+            const maxPixelWidth = 200;
+            const largerX = Math.max(phys.xp0, phys.xn0);
+            const scaleFactor = maxPixelWidth / (largerX * 1.3);
+
+            const xp_pix = Math.max(12, phys.xp0 * scaleFactor);
+            const xn_pix = Math.max(12, phys.xn0 * scaleFactor);
+
+            ctx.fillStyle = '#1e1b4b'; ctx.fillRect(35, topBarY, midX - 35, barHeight);
+            ctx.fillStyle = '#082f49'; ctx.fillRect(midX, topBarY, canvas.width - 70 - (midX - 35), barHeight);
+
+            ctx.fillStyle = '#020617'; ctx.fillRect(midX - xp_pix, topBarY, xp_pix + xn_pix, barHeight);
+            ctx.strokeStyle = '#10b981'; ctx.lineWidth = 1.5; ctx.strokeRect(midX - xp_pix, topBarY, xp_pix + xn_pix, barHeight);
+
+            ctx.fillStyle = '#f43f5e'; ctx.font = 'bold 11px sans-serif'; ctx.fillText('Neutro P', 45, topBarY + 28);
+            ctx.fillStyle = '#38bdf8'; ctx.fillText('Neutro N', canvas.width - 105, topBarY + 28);
+            ctx.fillStyle = '#10b981'; ctx.font = 'bold 10px monospace';
+            ctx.fillText(`W0 = ${(phys.W0*1e4).toFixed(3)} μm`, midX - 35, topBarY + 28);
+
+            ctx.strokeStyle = '#1e293b'; ctx.setLineDash([3, 3]);
+            ctx.beginPath(); ctx.moveTo(midX - xp_pix, topBarY); ctx.lineTo(midX - xp_pix, 360); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(midX, topBarY); ctx.lineTo(midX, 360); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(midX + xn_pix, topBarY); ctx.lineTo(midX + xn_pix, 360); ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 10px monospace';
+            ctx.fillText('-xp0', midX - xp_pix - 12, topBarY - 6);
+            ctx.fillText('x=0', midX - 8, topBarY - 6);
+            ctx.fillText('+xn0', midX + xn_pix - 10, topBarY - 6);
+
+            const gBaseY = 350;
+            const gTopY = 125;
+            const gHeight = gBaseY - gTopY;
+
+            ctx.strokeStyle = '#475569'; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.moveTo(35, gBaseY); ctx.lineTo(canvas.width - 35, gBaseY); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(35, gTopY - 15); ctx.lineTo(35, gBaseY + 10); ctx.stroke();
+
+            ctx.fillStyle = '#ffffff'; ctx.font = 'bold 11px sans-serif';
+            ctx.fillText('ϕ(x) [V]', 10, gTopY - 18);
+            ctx.fillText('x [μm]', canvas.width - 45, gBaseY + 18);
+            ctx.fillText('0 V', 12, gBaseY + 4);
+
+            const totalSteps = 240;
+            const startX_pix = 35;
+            const endX_pix = canvas.width - 35;
+
+            ctx.strokeStyle = '#10b981'; ctx.lineWidth = 3; ctx.beginPath();
+            for (let i = 0; i <= totalSteps; i++) {
+                const curPix = startX_pix + (i / totalSteps) * (endX_pix - startX_pix);
+                const cur_x_cm = (curPix - midX) / scaleFactor;
+
+                let phi = 0;
+                if (cur_x_cm <= -phys.xp0) phi = 0;
+                else if (cur_x_cm < 0) phi = (q * phys.Na * Math.pow(cur_x_cm + phys.xp0, 2)) / (2 * phys.eps_si);
+                else if (cur_x_cm <= phys.xn0) phi = phys.Vbi - (q * phys.Nd * Math.pow(phys.xn0 - cur_x_cm, 2)) / (2 * phys.eps_si);
+                else phi = phys.Vbi;
+
+                const curY = gBaseY - (phi / phys.Vbi) * gHeight;
+                if (i === 0) ctx.moveTo(curPix, curY);
+                else ctx.lineTo(curPix, curY);
+            }
+            ctx.stroke();
+
+            const phi_0 = phys.vbi_p;
+            const y_x0 = gBaseY - (phi_0 / phys.Vbi) * gHeight;
+            ctx.fillStyle = '#f59e0b';
+            ctx.beginPath(); ctx.arc(midX, y_x0, 4, 0, Math.PI*2); ctx.fill();
+            ctx.fillText(`ϕ(0) = ${phi_0.toFixed(3)}V`, midX + 8, y_x0 - 4);
+
+            const probePix = midX + probe_x_cm * scaleFactor;
+            if (probePix >= 35 && probePix <= canvas.width - 35) {
+                let phi_probe = 0;
+                if (probe_x_cm <= -phys.xp0) phi_probe = 0;
+                else if (probe_x_cm < 0) phi_probe = (q * phys.Na * Math.pow(probe_x_cm + phys.xp0, 2)) / (2 * phys.eps_si);
+                else if (probe_x_cm <= phys.xn0) phi_probe = phys.Vbi - (q * phys.Nd * Math.pow(phys.xn0 - probe_x_cm, 2)) / (2 * phys.eps_si);
+                else phi_probe = phys.Vbi;
+
+                const probeY = gBaseY - (phi_probe / phys.Vbi) * gHeight;
+
+                ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 1.5; ctx.setLineDash([3, 3]);
+                ctx.beginPath(); ctx.moveTo(probePix, topBarY); ctx.lineTo(probePix, gBaseY); ctx.stroke();
+                ctx.setLineDash([]);
+
+                ctx.fillStyle = '#38bdf8'; ctx.beginPath(); ctx.arc(probePix, probeY, 6, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+
+                ctx.fillStyle = '#020617';
+                ctx.fillRect(probePix - 40, probeY - 26, 80, 18);
+                ctx.strokeStyle = '#38bdf8';
+                ctx.strokeRect(probePix - 40, probeY - 26, 80, 18);
+                ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 9px monospace';
+                ctx.fillText(`${phi_probe.toFixed(3)} V`, probePix - 25, probeY - 14);
+            }
+
+            const vbiCotaX = canvas.width - 30;
+            ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(vbiCotaX, gBaseY); ctx.lineTo(vbiCotaX, gTopY); ctx.stroke();
+            ctx.fillStyle = '#f59e0b'; ctx.font = 'bold 11px sans-serif';
+            ctx.fillText(`Vbi = ${phys.Vbi.toFixed(3)} V`, vbiCotaX - 110, gTopY - 6);
+        }
+
+        // Listeners Pestaña 1
+        document.getElementById('t1-na').addEventListener('input', () => {
+            initStageParticles(parseFloat(document.getElementById('t1-na').value), parseFloat(document.getElementById('t1-nd').value));
+            updateT1();
+        });
+        document.getElementById('t1-nd').addEventListener('input', () => {
+            initStageParticles(parseFloat(document.getElementById('t1-na').value), parseFloat(document.getElementById('t1-nd').value));
+            updateT1();
+        });
+        document.getElementById('t1-t').addEventListener('input', updateT1);
+
+        // Listeners Pestaña 2
+        document.getElementById('t3-na').addEventListener('input', updateT3);
+        document.getElementById('t3-nd').addEventListener('input', updateT3);
+        document.getElementById('t3-t').addEventListener('input', updateT3);
+
+        // Listeners Pestaña 3
+        document.getElementById('t2-na').addEventListener('input', updateT2);
+        document.getElementById('t2-nd').addEventListener('input', updateT2);
+
+        // Listeners Pestaña 4
+        document.getElementById('t4-na').addEventListener('input', updateT4);
+        document.getElementById('t4-nd').addEventListener('input', updateT4);
+        document.getElementById('t4-t').addEventListener('input', updateT4);
+        document.getElementById('t4-xpos-slider').addEventListener('input', updateT4);
+
+        initT3Dynamics();
+        setStage(2);
+        switchTab('tab1');
+    </script>
+<footer class="sim-footer">
+    <p><strong>Física de los Semiconductores</strong> </p>
+    <p> José Luis Bossa </p>
+    <p> Facultad de Ingeniería y Ciencias Agropecuarias (FICA) - Universidad Nacional de San Luis </p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+ 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dinámica del Nivel de Fermi</title>
+    <!-- Tailwind CSS para diseño moderno y responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+    </style>
+    <link rel="stylesheet" href="assets/css/tema.css">
+</head>
+<!-- Renderizador de LaTeX (MathJax) -->
+<script>
+  MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<body class="p-6 font-sans">
+    <!-- Botón Flotante para Volver al Portal (Misma Carpeta) -->
+<a href="index.html" class="btn-volver-portal">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+    </svg>
+    Volver al Portal
+</a>
+
+<style>
+    .btn-volver-portal {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 9999;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        background-color: #1e293b;
+        color: #38bdf8;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        text-decoration: none;
+        font-family: system-ui, -apple-system, sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        transition: all 0.2s ease;
+    }
+
+    .btn-volver-portal:hover {
+        background-color: #334155;
+        border-color: #38bdf8;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(56, 189, 248, 0.25);
+    }
+</style>
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Encabezado -->
+        <header class="mb-6 border-b border-slate-700 pb-4 text-center md:text-left">
+               <p class="subtitle">Física de los Semiconductores - FICA (UNSL)</p>
+
+            <h1 class="text-3xl font-extrabold text-sky-400">Dinámica del Nivel de Fermi</h1>
+            <p class="text-slate-400 mt-1">Simulador Interactivo: Desplazamiento del Nivel de Fermi, Bandas de Energía y Dopaje (P y N)</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Columna de Controles (Izquierda) -->
+            <div class="lg:col-span-4 bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <span>⚙️</span> Parámetros del Cristal
+                    </h2>
+                    
+                    <!-- Control de Temperatura -->
+                    <div class="mb-6">
+                        <div class="flex justify-between mb-2">
+                            <label class="text-sm font-semibold text-slate-300">Temperatura ($T$):</label>
+                            <span class="text-sm font-mono text-sky-400" id="temp-val">$300 K$</span>
+                        </div>
+                        <input type="range" id="temp-slider" min="100" max="700" value="300" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-sky-500">
+                        <div class="flex justify-between text-xs text-slate-500 mt-1">
+                            <span>$100 K$ (Criogénico)</span>
+                            <span>$700 K$ (Extremo)</span>
+                        </div>
+                    </div>
+
+                    <!-- Control de Dopaje Donor (Nd) -->
+                    <div class="mb-6">
+                        <div class="flex justify-between mb-2">
+                            <label class="text-sm font-semibold text-emerald-400">Dopaje Donor $N_D$ - Tipo N):</label>
+                            <span class="text-sm font-mono text-emerald-400" id="nd-val">$10^{15}$ cm⁻³</span>
+                        </div>
+                        <input type="range" id="nd-slider" min="10" max="18" step="0.5" value="15" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                        <div class="flex justify-between text-xs text-slate-500 mt-1">
+                            <span>Mín $10^{10}$</span>
+                            <span>Max $10^{18}$</span>
+                        </div>
+                    </div>
+
+                    <!-- Control de Dopaje Aceptor (Na) -->
+                    <div class="mb-6">
+                        <div class="flex justify-between mb-2">
+                            <label class="text-sm font-semibold text-rose-400">Dopaje Aceptor $N_A$ - Tipo P):</label>
+                            <span class="text-sm font-mono text-rose-400" id="na-val">$10^{10}$ cm⁻³</span>
+                        </div>
+                        <input type="range" id="na-slider" min="10" max="18" step="0.5" value="10" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-rose-500">
+                        <div class="flex justify-between text-xs text-slate-500 mt-1">
+                            <span>Mín $10^{10}$</span>
+                            <span>Max $10^{18}$</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cuadro de Datos Físicos Recalculados -->
+                <div class="bg-slate-900 p-4 rounded-xl border border-slate-700/50 mt-4 text-xs font-mono">
+                    <h3 class="text-slate-400 uppercase tracking-wider font-bold mb-2 text-center border-b border-slate-800 pb-1">Resultados de Equilibrio</h3>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-400">Ancho de Banda (E<sub>g</sub>):</span>
+                        <span id="stat-eg" class="text-white">1.12 eV</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-400">Intrínseco (n<sub>i</sub>):</span>
+                        <span id="stat-ni" class="text-sky-300">1.50e10 cm⁻³</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-400">Electrones (n₀):</span>
+                        <span id="stat-n0" class="text-emerald-400">1.00e15 cm⁻³</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-400">Huecos (p₀):</span>
+                        <span id="stat-p0" class="text-rose-400">2.25e5 cm⁻³</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-400">Estado:</span>
+                        <span id="stat-state" class="font-bold text-white uppercase px-1.5 py-0.5 rounded text-[10px]">Extrínseco N</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna del Diagrama de Bandas (Derecha) -->
+            <div class="lg:col-span-8 bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700 flex flex-col justify-between">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-white">📈 Diagrama de Bandas de Energía</h2>
+                    <span class="bg-slate-900 text-slate-400 text-xs px-2.5 py-1 rounded-full border border-slate-700">Modelo Físico Silicio (Si)</span>
+                </div>
+
+                <!-- Canvas para graficar dinámicamente -->
+                <div class="relative bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center p-2" style="height: 420px;">
+                    <canvas id="band-canvas" width="650" height="400" class="w-full h-full max-w-[650px]"></canvas>
+                </div>
+
+                <!-- Guía rápida para la explicación en clase -->
+                <div class="mt-4 grid grid-cols-3 gap-2 text-[11px] text-center">
+                    <div class="bg-slate-900/50 p-2 rounded border border-slate-700/30">
+                        <p class="font-bold text-emerald-400">Dopaje N (Donores)</p>
+                        <p class="text-slate-400 mt-0.5">Introduce niveles E<sub>D</sub> cerca de E<sub>C</sub>. E<sub>F</sub> sube.</p>
+                    </div>
+                    <div class="bg-slate-900/50 p-2 rounded border border-slate-700/30">
+                        <p class="font-bold text-rose-400">Dopaje P (Aceptores)</p>
+                        <p class="text-slate-400 mt-0.5">Introduce niveles E<sub>A</sub> cerca de E<sub>V</sub>. E<sub>F</sub> baja.</p>
+                    </div>
+                    <div class="bg-slate-900/50 p-2 rounded border border-slate-700/30">
+                        <p class="font-bold text-amber-400">Efecto Térmico</p>
+                        <p class="text-slate-400 mt-0.5">A alta Temp, n<sub>i</sub> aumenta, E<sub>g</sub> se reduce y E<sub>F</sub> tiende a E<sub>i</sub>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lógica de Simulación Física en JavaScript -->
+    <script>
+        const canvas = document.getElementById('band-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Controles de la interfaz
+        const tempSlider = document.getElementById('temp-slider');
+        const ndSlider = document.getElementById('nd-slider');
+        const naSlider = document.getElementById('na-slider');
+
+        const tempVal = document.getElementById('temp-val');
+        const ndVal = document.getElementById('nd-val');
+        const naVal = document.getElementById('na-val');
+
+        const statEg = document.getElementById('stat-eg');
+        const statNi = document.getElementById('stat-ni');
+        const statN0 = document.getElementById('stat-n0');
+        const statP0 = document.getElementById('stat-p0');
+        const statState = document.getElementById('stat-state');
+
+        // Parámetros constantes del Silicio (Si)
+        const k = 8.617333e-5; // Constante de Boltzmann en eV/K
+        const Nc300 = 2.8e19;   // Densidad de estados en banda de conducción a 300K (cm^-3)
+        const Nv300 = 1.04e19;  // Densidad de estados en banda de valencia a 300K (cm^-3)
+
+        function updateSimulation() {
+            const T = parseFloat(tempSlider.value);
+            const Nd_log = parseFloat(ndSlider.value);
+            const Na_log = parseFloat(naSlider.value);
+
+            // Convertir logaritmos a valores reales
+            const Nd = Math.pow(10, Nd_log);
+            const Na = Math.pow(10, Na_log);
+
+            // Actualizar etiquetas de texto
+            tempVal.textContent = `${T} K`;
+            ndVal.textContent = Nd_log === 10 ? 'Puro (~10¹⁰) cm⁻³' : `10¹${Nd_log.toString().split('.')[1] ? '⁵' : ''} cm⁻³`.replace('10¹15', '10¹⁵').replace('10¹10', '10¹⁰').replace('10¹18', '10¹⁸');
+            ndVal.textContent = `10^{${Nd_log}} cm⁻³`.replace('{10}','¹⁰').replace('{15}','¹⁵').replace('{18}','¹⁸').replace('{','').replace('}','');
+            naVal.textContent = `10^{${Na_log}} cm⁻³`.replace('{10}','¹⁰').replace('{15}','¹⁵').replace('{18}','¹⁸').replace('{','').replace('}','');
+
+            // 1. Variación de Eg con la Temperatura (Ecuación de Varshni para el Silicio)
+            const Eg0 = 1.17; // eV a 0K
+            const alpha = 4.73e-4;
+            const beta = 636;
+            const Eg = Eg0 - (alpha * T * T) / (T + beta);
+            statEg.textContent = `${Eg.toFixed(3)} eV`;
+
+            // 2. Densidad de estados dependiente de la temperatura
+            const Nc = Nc300 * Math.pow(T / 300, 1.5);
+            const Nv = Nv300 * Math.pow(T / 300, 1.5);
+
+            // 3. Concentración de portadores intrínsecos ni
+            const ni = Math.sqrt(Nc * Nv) * Math.exp(-Eg / (2 * k * T));
+            statNi.textContent = ni.toExponential(2) + " cm⁻³";
+
+            // 4. Ecuación cuadrática de neutralidad para n0 y p0
+            let n0, p0;
+            const netDoping = Nd - Na;
+
+            if (netDoping >= 0) {
+                n0 = (netDoping / 2) + Math.sqrt(Math.pow(netDoping / 2, 2) + Math.pow(ni, 2));
+                p0 = (ni * ni) / n0;
+            } else {
+                p0 = (Math.abs(netDoping) / 2) + Math.sqrt(Math.pow(Math.abs(netDoping) / 2, 2) + Math.pow(ni, 2));
+                n0 = (ni * ni) / p0;
+            }
+
+            statN0.textContent = n0.toExponential(2) + " cm⁻³";
+            statP0.textContent = p0.toExponential(2) + " cm⁻³";
+
+            // Clasificar estado del semiconductor
+            if (ni * 5 > Math.max(Nd, Na)) {
+                statState.textContent = "Intrínseco";
+                statState.className = "font-bold text-white uppercase px-1.5 py-0.5 rounded text-[10px] bg-amber-500/80";
+            } else if (Nd > Na) {
+                statState.textContent = "Extrínseco N";
+                statState.className = "font-bold text-white uppercase px-1.5 py-0.5 rounded text-[10px] bg-emerald-600";
+            } else {
+                statState.textContent = "Extrínseco P";
+                statState.className = "font-bold text-white uppercase px-1.5 py-0.5 rounded text-[10px] bg-rose-600";
+            }
+
+            // 5. Cálculo del nivel de Fermi Ef relativo a Ei (medio de la banda prohibida)
+            // Ei está en el centro geométrico. Ef = Ei + kT*ln(n0/ni)
+            let Ef_relative = k * T * Math.log(n0 / ni); // en eV
+
+            // Limitar para que no salga absurdamente del dibujo si entra en degeneración teórica extrema
+            const limit = Eg / 2 + 0.1;
+            if (Ef_relative > limit) Ef_relative = limit;
+            if (Ef_relative < -limit) Ef_relative = -limit;
+
+            drawDiagram(Eg, Ef_relative, T, Nd, Na, n0, p0);
+        }
+
+        function drawDiagram(Eg, Ef_rel, T, Nd, Na, n0, p0) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const midY = canvas.height / 2;
+            const scale = 140; // píxeles por eV
+
+            // Posiciones verticales (Y) de las bandas
+            const EcY = midY - (Eg / 2) * scale;
+            const EvY = midY + (Eg / 2) * scale;
+            const EiY = midY;
+            const EfY = midY - Ef_rel * scale;
+
+            // 1. Dibujar Banda de Conducción (Sombreado Azul/Celeste)
+            ctx.fillStyle = 'rgba(14, 116, 144, 0.15)';
+            ctx.fillRect(100, 0, 450, EcY);
+            ctx.strokeStyle = '#06b6d4';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(100, EcY);
+            ctx.lineTo(550, EcY);
+            ctx.stroke();
+
+            // Texto de Ec
+            ctx.fillStyle = '#22d3ee';
+            ctx.font = 'bold 13px sans-serif';
+            ctx.fillText('Banda de Conducción (Ec)', 110, EcY - 15);
+
+            // 2. Dibujar Banda de Valencia (Sombreado Rojo)
+            ctx.fillStyle = 'rgba(190, 24, 74, 0.12)';
+            ctx.fillRect(100, EvY, 450, canvas.height - EvY);
+            ctx.strokeStyle = '#f43f5e';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(100, EvY);
+            ctx.lineTo(550, EvY);
+            ctx.stroke();
+
+            // Texto de Ev
+            ctx.fillStyle = '#f43f5e';
+            ctx.fillText('Banda de Valencia (Ev)', 110, EvY + 25);
+
+            // 3. Nivel Energético de Donores (Ed) si Nd está activo
+            if (Nd > 1e10) {
+                const EdY = EcY + 0.045 * scale; // 0.045 eV abajo de Ec
+                ctx.strokeStyle = '#10b981';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([6, 4]);
+                ctx.beginPath();
+                ctx.moveTo(100, EdY);
+                ctx.lineTo(550, EdY);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#10b981';
+                ctx.font = '10px monospace';
+                ctx.fillText('Ed (Nivel Donor)', 455, EdY - 6);
+            }
+
+            // 4. Nivel Energético de Aceptores (Ea) si Na está activo
+            if (Na > 1e10) {
+                const EaY = EvY - 0.045 * scale; // 0.045 eV arriba de Ev
+                ctx.strokeStyle = '#f43f5e';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([6, 4]);
+                ctx.beginPath();
+                ctx.moveTo(100, EaY);
+                ctx.lineTo(550, EaY);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#f43f5e';
+                ctx.font = '10px monospace';
+                ctx.fillText('Ea (Nivel Aceptor)', 455, EaY + 12);
+            }
+
+            // 5. Nivel Intrínseco de Fermi (Ei - Centro Geométrico)
+            ctx.strokeStyle = 'rgba(251, 191, 36, 0.4)';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([8, 8]);
+            ctx.beginPath();
+            ctx.moveTo(100, EiY);
+            ctx.lineTo(550, EiY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = 'rgba(251, 191, 36, 0.7)';
+            ctx.font = '11px sans-serif';
+            ctx.fillText('Ei (Nivel Intrínseco)', 110, EiY - 6);
+
+            // 6. Nivel REAL de Fermi (Ef) - Animado/Dinámico
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(100, EfY);
+            ctx.lineTo(550, EfY);
+            ctx.stroke();
+
+            // Resplandor del Nivel de Fermi
+            ctx.shadowColor = '#f59e0b';
+            ctx.shadowBlur = 10;
+            ctx.strokeStyle = '#fbbf24';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            ctx.shadowBlur = 0; // resetear sombra
+
+            // Texto de Ef
+            ctx.fillStyle = '#fbbf24';
+            ctx.font = 'bold 13px sans-serif';
+            ctx.fillText('Ef (Nivel de Fermi)', 300, EfY - 8);
+
+            // 7. Dibujar portadores de carga (Electrones en CB, Huecos en VB)
+            // Dibujar electrones en Ec
+            const numElectrons = Math.min(Math.ceil(Math.log10(n0) * 1.5), 25);
+            ctx.fillStyle = '#38bdf8';
+            for (let i = 0; i < numElectrons; i++) {
+                const x = 120 + (i * (410 / numElectrons)) + Math.sin(i) * 5;
+                const y = EcY - 10 - (Math.cos(i) * 8);
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Dibujar huecos en Ev
+            const numHoles = Math.min(Math.ceil(Math.log10(p0) * 1.5), 25);
+            ctx.strokeStyle = '#f43f5e';
+            ctx.lineWidth = 1.5;
+            for (let i = 0; i < numHoles; i++) {
+                const x = 120 + (i * (410 / numHoles)) + Math.cos(i) * 5;
+                const y = EvY + 10 + (Math.sin(i) * 8);
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            // Ejes de Energía Izquierdo
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(80, 20);
+            ctx.lineTo(80, canvas.height - 20);
+            // Flecha arriba
+            ctx.lineTo(75, 30);
+            ctx.moveTo(80, 20);
+            ctx.lineTo(85, 30);
+            ctx.stroke();
+
+            ctx.fillStyle = '#94a3b8';
+            ctx.save();
+            ctx.translate(55, canvas.height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillText('Energía Electrónica E (eV)', -70, 0);
+            ctx.restore();
+        }
+
+        // Event Listeners para actualizar en vivo
+        tempSlider.addEventListener('input', updateSimulation);
+        ndSlider.addEventListener('input', updateSimulation);
+        naSlider.addEventListener('input', updateSimulation);
+
+        // Inicializar simulación
+        updateSimulation();
+    </script>
+<footer class="sim-footer">
+    <p><strong>Física de los Semiconductores</strong> </p>
+    <p> José Luis Bossa </p>
+    <p> Facultad de Ingeniería y Ciencias Agropecuarias (FICA) - Universidad Nacional de San Luis </p>
+</footer>
+</body>
+</html>

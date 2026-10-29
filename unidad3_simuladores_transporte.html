@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Renderizador de LaTeX (MathJax) -->
+<script>
+  MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transporte de Portadores</title>
+    <!-- Tailwind CSS para diseño moderno, limpio y responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #0b0f1a;
+            color: #f8fafc;
+        }
+        .tab-btn.active {
+            background-color: #1e293b;
+            border-color: #38bdf8;
+            color: #38bdf8;
+        }
+    </style>
+    <link rel="stylesheet" href="assets/css/tema.css">
+</head>
+<body class="p-6 font-sans">
+    <!-- Botón Flotante para Volver al Portal (Misma Carpeta) -->
+<a href="index.html" class="btn-volver-portal">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+    </svg>
+    Volver al Portal
+</a>
+
+<style>
+    .btn-volver-portal {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 9999;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        background-color: #1e293b;
+        color: #38bdf8;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        text-decoration: none;
+        font-family: system-ui, -apple-system, sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        transition: all 0.2s ease;
+    }
+
+    .btn-volver-portal:hover {
+        background-color: #334155;
+        border-color: #38bdf8;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(56, 189, 248, 0.25);
+    }
+</style>
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Encabezado -->
+        <header class="mb-6 border-b border-slate-700 pb-4 text-center md:text-left">
+                 <p class="subtitle">Física de los Semiconductores - FICA (UNSL)</p>
+
+            <h1 class="text-3xl font-extrabold text-sky-400">Transporte de Portadores</h1>
+            <p class="text-slate-400 mt-1">Simulador Interactivo: Arrastre, Difusión y Resistividad </p>
+        </header>
+
+
+        <!-- Barra de Navegación de Pestañas (Secuencia oficial: Arrastre -> Resistividad -> Difusión -> G-R) -->
+        <div class="flex flex-wrap gap-2 mb-6 border-b border-slate-800 pb-4">
+            <button onclick="switchTab('drift')" id="tab-drift" class="tab-btn active px-4 py-3 rounded-xl border border-slate-800 bg-slate-900 text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
+                <span>⚡</span> 1. Arrastre (Drift)
+            </button>
+            <button onclick="switchTab('conductivity')" id="tab-conductivity" class="tab-btn px-4 py-3 rounded-xl border border-slate-800 bg-slate-900 text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
+                <span>🔌</span> 2. Resistividad y Movilidad (Macro/Micro)
+            </button>
+            <button onclick="switchTab('diffusion')" id="tab-diffusion" class="tab-btn px-4 py-3 rounded-xl border border-slate-800 bg-slate-900 text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
+                <span>🌊</span> 3. Difusión (Diffusion)
+            </button>
+            <button onclick="switchTab('recombination')" id="tab-recombination" class="tab-btn px-4 py-3 rounded-xl border border-slate-800 bg-slate-900 text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
+                <span>🔄</span> 4. Generación y Recombinación (G-R)
+            </button>
+        </div>
+
+        <!-- ================= PESTAÑA 1: ARRASTRE (DRIFT) ================= -->
+        <section id="content-drift" class="tab-content grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Controles -->
+            <div class="lg:col-span-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-sky-400 mb-4 flex items-center gap-2">⚙️ Controles de Deriva</h3>
+
+                    <div class="mb-6">
+                        <div class="flex justify-between mb-2">
+                            <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Campo Eléctrico ($\mathcal{E}$):</label>
+                            <span class="text-sm font-mono text-sky-400 font-bold" id="drift-e-val">0 $V/cm$</span>
+                        </div>
+                        <input type="range" id="drift-e" min="0" max="5000" step="100" value="0" class="w-full accent-sky-500">
+                        <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                            <span>0 (Mov. Térmico Puro)</span>
+                            <span>5000 V/cm (Fuerte Deriva)</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <div class="flex justify-between mb-2">
+                            <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Temperatura (T):</label>
+                            <span class="text-sm font-mono text-amber-400 font-bold" id="drift-t-val">300 K</span>
+                        </div>
+                        <input type="range" id="drift-t" min="100" max="600" step="25" value="300" class="w-full accent-amber-500">
+                    </div>
+                </div>
+
+                <!-- Cálculos en vivo -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono">
+                    <div class="flex justify-between py-1 border-b border-slate-900">
+                        <span class="text-slate-500">Vel. Térmica (vth):</span>
+                        <span class="text-white font-bold" id="calc-vth">2.30e7 cm/s</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-b border-slate-900">
+                        <span class="text-slate-500">Movilidad Electrones (μn):</span>
+                        <span class="text-emerald-400 font-bold" id="calc-mun">1350 cm²/V·s</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-500">Vel. Deriva Electrón (vd):</span>
+                        <span class="text-cyan-400 font-bold" id="calc-vd">0.00 cm/s</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Canvas de Animación -->
+            <div class="lg:col-span-8 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <div class="flex justify-between items-center mb-3">
+                    <h4 class="font-bold text-white font-sans">Visualizador Atómico de Deriva</h4>
+                    <span class="text-xs px-2 py-1 rounded bg-slate-950 text-slate-400 border border-slate-800">Cian: Electrón (-) | Rojo: Hueco (+)</span>
+                </div>
+                <div class="relative bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center p-2" style="height: 380px;">
+                    <canvas id="drift-canvas" width="650" height="360" class="w-full h-full max-w-[650px]"></canvas>
+                </div>
+                <div class="text-[11px] text-slate-500 mt-3 text-center italic">
+                    Ecuación de transporte: $$ v_d = \mu E $$. Sin campo eléctrico aplicado ($E = 0$), el movimiento térmico aleatorio produce un desplazamiento neto nulo.
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PESTAÑA 2: RESISTIVIDAD Y MOVILIDAD ================= -->
+        <section id="content-conductivity" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Controles -->
+            <div class="lg:col-span-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-emerald-400 mb-4 flex items-center gap-2">⚙️ Parámetros de Conducción</h3>
+
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1">
+                            <label class="text-xs font-semibold text-slate-300">Dopaje Donor (Nd):</label>
+                            <span class="text-sm font-mono text-emerald-400 font-bold" id="cond-nd-val">10¹⁵ cm⁻³</span>
+                        </div>
+                        <input type="range" id="cond-nd" min="11" max="18" step="0.1" value="15" class="w-full accent-emerald-500">
+                        <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                            <span>Mín (10¹¹)</span>
+                            <span>Máx (10¹⁸)</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1">
+                            <label class="text-xs font-semibold text-slate-300">Temperatura (T):</label>
+                            <span class="text-sm font-mono text-amber-400 font-bold" id="cond-t-val">300 K</span>
+                        </div>
+                        <input type="range" id="cond-t" min="100" max="600" step="10" value="300" class="w-full accent-amber-500">
+                    </div>
+
+                    <!-- Canal de Deriva Microscópico Interno -->
+                    <div class="border-t border-slate-800 pt-4 mt-4">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Comportamiento Microscópico Interno</h4>
+                        <label class="text-[10px] text-slate-400 block mb-1">Movimiento de Electrones a velocidad de deriva ($v_d = \mu_n E$):</label>
+                        <div class="w-full h-12 bg-slate-950 border border-slate-800 rounded-lg overflow-hidden relative">
+                            <!-- Electrones moviéndose con velocidad dependiente de mu_n -->
+                            <div class="absolute inset-y-0 left-0 w-full flex items-center overflow-hidden">
+                                <div class="carrier-dot bg-cyan-400 w-2.5 h-2.5 rounded-full shadow-[0_0_8px_#22d3ee] absolute"></div>
+                                <div class="carrier-dot bg-cyan-400 w-2.5 h-2.5 rounded-full shadow-[0_0_8px_#22d3ee] absolute" style="animation-delay: 0.1s;"></div>
+                                <div class="carrier-dot bg-cyan-400 w-2.5 h-2.5 rounded-full shadow-[0_0_8px_#22d3ee] absolute" style="animation-delay: 0.2s;"></div>
+                                <div class="carrier-dot bg-cyan-400 w-2.5 h-2.5 rounded-full shadow-[0_0_8px_#22d3ee] absolute" style="animation-delay: 0.3s;"></div>
+                                <div class="carrier-dot bg-cyan-400 w-2.5 h-2.5 rounded-full shadow-[0_0_8px_#22d3ee] absolute" style="animation-delay: 0.4s;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Opciones de Geometría (Para calcular Resistencia macroscópica terminal) -->
+                    <div class="border-t border-slate-800 pt-3 mt-3">
+                        <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 font-sans">Cálculo de Resistencia terminal (Para L=1mm, A=0.1mm²)</h4>
+                        <div class="flex justify-between text-xs font-mono text-slate-400">
+                            <span>Resistencia (R):</span>
+                            <span class="text-yellow-400 font-bold" id="calc-res">463.0 Ω</span>
+                        </div>
+                        <div class="flex justify-between text-xs font-mono text-slate-400">
+                            <span>Corriente (I) a 5V:</span>
+                            <span class="text-white font-bold" id="calc-curr">10.8 mA</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cálculos macroscópicos y microscópicos -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono">
+                    <div class="text-center font-bold text-[10px] text-slate-500 border-b border-slate-900 pb-1 mb-2">PROPIEDADES INTRÍNSECAS (MACRO)</div>
+                    <div class="flex justify-between py-1 border-b border-slate-900">
+                        <span class="text-slate-500">Movilidad (μn):</span>
+                        <span class="text-cyan-400 font-bold" id="calc-cond-mu">1350 cm²/V·s</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-b border-slate-900">
+                        <span class="text-slate-500">Conductividad (σ):</span>
+                        <span class="text-emerald-400 font-bold" id="calc-sigma">0.216 S/cm</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-500">Resistividad (ρ):</span>
+                        <span class="text-yellow-400 font-bold" id="calc-rho">4.63 Ω·cm</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-t border-slate-900 mt-2 pt-1">
+                        <span class="text-slate-500">Conc. Intrínseca (ni):</span>
+                        <span class="text-sky-300 font-bold" id="calc-cond-ni">1.0e10 cm⁻³</span>
+                    </div>
+                    <div class="text-center mt-2">
+                        <span id="thermal-warning" class="text-[10px] bg-red-950 text-red-400 border border-red-900 px-2 py-0.5 rounded font-bold hidden">⚠️ COMPORTAMIENTO INTRÍNSECO (AVALANCHA)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel del Gráfico de Curva de Resistividad -->
+            <div class="lg:col-span-8 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <div class="flex justify-between items-center mb-3">
+                    <h4 class="font-bold text-white font-sans">Curva de Resistividad vs. Concentración de Impurezas ($\rho$ vs. $N_D$)</h4>
+                    <span class="text-xs px-2.5 py-1 rounded bg-slate-950 text-slate-400 border border-slate-800">Gráfico Log-Log Oficial</span>
+                </div>
+
+                <!-- Canvas para graficar dinámicamente la curva de resistividad -->
+                <div class="relative bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center p-2" style="height: 380px;">
+                    <canvas id="resistivity-curve-canvas" width="650" height="360" class="w-full h-full max-w-[650px]"></canvas>
+                </div>
+
+                <div class="text-[11px] text-slate-500 mt-3 text-center italic">
+                    La curva muestra cómo la resistividad disminuye al aumentar el dopado. Observe que la pendiente no es lineal debido a la dispersión por impurezas ionizadas que reduce la movilidad $\mu(N_D)$ a altos dopajes.
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PESTAÑA 3: DIFUSIÓN (DIFFUSION) ================= -->
+        <section id="content-diffusion" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Controles -->
+            <div class="lg:col-span-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-rose-400 mb-4 flex items-center gap-2">⚙️ Controles de Difusión</h3>
+
+                    <button onclick="injectDiffusionPulse()" class="w-full py-3 mb-6 bg-rose-600 hover:bg-rose-500 text-white font-extrabold rounded-xl transition shadow-lg flex justify-center items-center gap-2">
+                        <span>💥</span> INYECTAR PULSO LÁSER
+                    </button>
+
+                    <div class="mb-6">
+                        <div class="flex justify-between mb-2">
+                            <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Temperatura (T):</label>
+                            <span class="text-sm font-mono text-amber-400 font-bold" id="diff-t-val">300 K</span>
+                        </div>
+                        <input type="range" id="diff-t" min="100" max="600" step="25" value="300" class="w-full accent-amber-500">
+                    </div>
+
+                    <div class="mb-6">
+                        <div class="flex justify-between mb-2">
+                            <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Tiempo de Vida Media (τ):</label>
+                            <span class="text-sm font-mono text-red-400 font-bold" id="diff-tau-val">5 μs</span>
+                        </div>
+                        <input type="range" id="diff-tau" min="1" max="20" step="1" value="5" class="w-full accent-red-500">
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider block mb-2">Tipo de Portador:</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="setDiffCarrier('electron')" id="diff-car-e" class="py-2 rounded-lg bg-slate-800 text-xs font-bold text-sky-400 border border-sky-500/50">Electrón (Mayor D)</button>
+                            <button onclick="setDiffCarrier('hole')" id="diff-car-h" class="py-2 rounded-lg bg-slate-950 text-xs font-bold text-slate-400 border border-slate-800">Hueco (Menor D)</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cálculos de Einstein -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono">
+                    <div class="text-center font-bold text-[10px] text-slate-500 border-b border-slate-900 pb-1 mb-2">RELACIÓN DE EINSTEIN</div>
+                    <div class="flex justify-between py-1 border-b border-slate-900">
+                        <span class="text-slate-500">Voltaje Térmico (Vt):</span>
+                        <span class="text-amber-400 font-bold" id="calc-vt">25.9 mV</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-b border-slate-900">
+                        <span class="text-slate-500">Movilidad (μ):</span>
+                        <span class="text-white font-bold" id="calc-diff-mu">1350 cm²/V·s</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-b border-slate-900">
+                        <span class="text-slate-500">Difusividad (D):</span>
+                        <span class="text-rose-400 font-bold" id="calc-diff-d">34.97 cm²/s</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-500">Portadores en Exceso:</span>
+                        <span class="text-yellow-400 font-bold" id="calc-diff-pct">100%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico de Difusión -->
+            <div class="lg:col-span-8 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <div class="flex justify-between items-center mb-3">
+                    <h4 class="font-bold text-white font-sans">Visualizador Dinámico del Perfil Espacial de Concentración</h4>
+                    <span id="diffusion-status-label" class="text-xs px-2.5 py-1 rounded bg-slate-950 text-slate-400 border border-slate-800">Semiconductor en Equilibrio</span>
+                </div>
+                <div class="relative bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center p-2" style="height: 380px;">
+                    <canvas id="diff-canvas" width="650" height="360" class="w-full h-full max-w-[650px]"></canvas>
+                </div>
+                <div class="text-[11px] text-slate-500 mt-3 text-center italic">
+                    Ecuación gobernante: $$ p'(x, t) = \frac{Q}{\sqrt{4\pi D t}} e^{-\frac{x^2}{4Dt}} \cdot e^{-\frac{t}{\tau_p}} $$. Las cargas se difunden debido al gradiente térmico y se recombinan en el tiempo gobernadas por $\tau_p$.
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PESTAÑA 4: RECOMBINACIÓN Y GENERACIÓN ================= -->
+        <section id="content-recombination" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Controles -->
+            <div class="lg:col-span-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-amber-400 mb-4 flex items-center gap-2">⚙️ Dinámica G-R</h3>
+
+                    <!-- Interruptor de Luz -->
+                    <div class="mb-6 flex justify-between items-center bg-slate-950 p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Excitación Fotónica:</span>
+                        <button onclick="toggleLight()" id="btn-light" class="px-6 py-2.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-black border border-slate-700 tracking-widest transition duration-300">
+                            OFF
+                        </button>
+                    </div>
+
+                    <div class="mb-6">
+                        <div class="flex justify-between mb-2">
+                            <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Tiempo de Vida Media (τ):</label>
+                            <span class="text-sm font-mono text-amber-400 font-bold" id="rec-tau-val">10 μs</span>
+                        </div>
+                        <input type="range" id="rec-tau" min="2" max="50" step="2" value="10" class="w-full accent-amber-500">
+                    </div>
+
+                    <div class="mb-6">
+                        <div class="flex justify-between mb-2">
+                            <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Tasa Gen. Óptica (g_L):</label>
+                            <span class="text-sm font-mono text-amber-400 font-bold" id="rec-gl-val">10¹⁶ cm⁻³/s</span>
+                        </div>
+                        <input type="range" id="rec-gl" min="15" max="17" step="0.1" value="16" class="w-full accent-amber-500">
+                    </div>
+                </div>
+
+                <!-- Estado Dinámico -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono">
+                    <div class="flex justify-between py-1 border-b border-slate-900">
+                        <span class="text-slate-500">Exceso Máximo Estacionario:</span>
+                        <span class="text-amber-400 font-bold" id="calc-ex-max">1.0e11 cm⁻³</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-500">Exceso Actual (p'):</span>
+                        <span class="text-white font-bold animate-pulse" id="calc-ex-curr">0.00e0 cm⁻³</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico Temporal de Transitorio -->
+            <div class="lg:col-span-8 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <div class="flex justify-between items-center mb-3">
+                    <h4 class="font-bold text-white font-sans">Gráfico Transitorio Temporal del Exceso de Portadores</h4>
+                    <span id="transient-state-label" class="text-xs px-2.5 py-1 rounded bg-slate-950 text-slate-400 border border-slate-800">Semiconductor en Equilibrio</span>
+                </div>
+                <div class="relative bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center p-2" style="height: 380px;">
+                    <canvas id="rec-canvas" width="650" height="360" class="w-full h-full max-w-[650px]"></canvas>
+                </div>
+                <div class="text-[11px] text-slate-500 mt-3 text-center italic">
+                    Ecuación diferencial de recombinación: $$ \frac{dp'}{dt} = G_L - \frac{p'}{\tau_p} $$. Al apagar la perturbación exterior ($G_L = 0$), el decaimiento decae de forma exponencial.
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- MathJax para visualización perfecta de fórmulas en Safari de MacOS -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Código de Simulación Física -->
+    <script>
+        // Navegación entre pestañas
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+
+            // Reinicializar animaciones específicas según la pestaña activa
+            if (tabId === 'drift') startDriftSim();
+            if (tabId === 'conductivity') startConductivitySim();
+            if (tabId === 'diffusion') startDiffusionSim();
+            if (tabId === 'recombination') startRecombinationSim();
+        }
+
+        // ================= CONTEXTOS GLOBALES Y CONSTANTES FÍSICAS =================
+        const q = 1.602e-19; // Carga elemental
+        const k = 8.617e-5; // Constante de Boltzmann (eV/K)
+        const Nc300 = 2.8e19;
+        const Nv300 = 1.04e19;
+
+        // Ecuación de movilidad rigurosa dependiente de Nd y T (Modelo de Arora para Silicio)
+        function getMobilitiesRigorous(T, Nd) {
+            const Tn = T / 300;
+            // Movilidad de electrones (con dispersión de red y por impurezas ionizadas)
+            const mu_min = 88 * Math.pow(Tn, -0.57);
+            const mu_max = 1252 * Math.pow(Tn, -2.33);
+            const N_ref = 1.26e17 * Math.pow(Tn, 2.4);
+            const alpha = 0.88 * Math.pow(Tn, -0.146);
+
+            const mu_n = mu_min + mu_max / (1 + Math.pow(Nd / N_ref, alpha));
+
+            // Movilidad de huecos (similar modelo)
+            const mup_min = 54.3 * Math.pow(Tn, -0.57);
+            const mup_max = 407 * Math.pow(Tn, -2.23);
+            const Np_ref = 2.35e17 * Math.pow(Tn, 2.4);
+            const alpha_p = 0.88 * Math.pow(Tn, -0.146);
+
+            const mu_p = mup_min + mup_max / (1 + Math.pow(Nd / Np_ref, alpha_p));
+
+            return { mu_n: Math.round(mu_n), mu_p: Math.round(mu_p) };
+        }
+
+        // ================= SIMULACIÓN 1: ARRASTRE (DRIFT) =================
+        let driftInterval;
+        let driftParticles = [];
+        const driftCanvas = document.getElementById('drift-canvas');
+        const driftCtx = driftCanvas.getContext('2d');
+
+        function startDriftSim() {
+            clearInterval(driftInterval);
+            const sliderE = document.getElementById('drift-e');
+            const sliderT = document.getElementById('drift-t');
+
+            driftParticles = [];
+            const numParticles = 35;
+            for(let i=0; i<numParticles; i++) {
+                driftParticles.push({
+                    x: Math.random() * driftCanvas.width,
+                    y: Math.random() * driftCanvas.height,
+                    type: i % 2 === 0 ? 'electron' : 'hole',
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: (Math.random() - 0.5) * 8
+                });
+            }
+
+            driftInterval = setInterval(() => {
+                const E = parseFloat(sliderE.value);
+                const T = parseFloat(sliderT.value);
+
+                document.getElementById('drift-e-val').textContent = `${E} V/cm`;
+                document.getElementById('drift-t-val').textContent = `${T} K`;
+
+                const mobs = getMobilitiesRigorous(T, 1e15);
+                const v_thermal = 2.3e7 * Math.sqrt(T / 300);
+                document.getElementById('calc-vth').textContent = v_thermal.toExponential(2) + " cm/s";
+                document.getElementById('calc-mun').textContent = `${mobs.mu_n} cm²/V·s`;
+                document.getElementById('calc-vd').textContent = (mobs.mu_n * E).toExponential(2) + " cm/s";
+
+                driftCtx.clearRect(0, 0, driftCanvas.width, driftCanvas.height);
+
+                // Red cristalina
+                driftCtx.fillStyle = '#1e293b';
+                for(let x=40; x<driftCanvas.width; x+=60) {
+                    for(let y=40; y<driftCanvas.height; y+=60) {
+                        driftCtx.beginPath();
+                        driftCtx.arc(x, y, 2.5, 0, Math.PI*2);
+                        driftCtx.fill();
+                    }
+                }
+
+                driftParticles.forEach(p => {
+                    p.x += p.vx + (Math.random() - 0.5) * (T * 0.015);
+                    p.y += p.vy + (Math.random() - 0.5) * (T * 0.015);
+
+                    if (p.type === 'electron') {
+                        p.x += -E * 0.0012; // Va en contra del campo eléctrico
+                        driftCtx.fillStyle = '#06b6d4';
+                        driftCtx.shadowColor = '#06b6d4';
+                        driftCtx.shadowBlur = 6;
+                        driftCtx.beginPath();
+                        driftCtx.arc(p.x, p.y, 4, 0, Math.PI*2);
+                        driftCtx.fill();
+                    } else {
+                        p.x += E * 0.0004; // Va a favor del campo eléctrico
+                        driftCtx.strokeStyle = '#ef4444';
+                        driftCtx.shadowColor = '#ef4444';
+                        driftCtx.shadowBlur = 6;
+                        driftCtx.lineWidth = 2.5;
+                        driftCtx.beginPath();
+                        driftCtx.arc(p.x, p.y, 4.5, 0, Math.PI*2);
+                        driftCtx.stroke();
+                    }
+                    driftCtx.shadowBlur = 0;
+
+                    if(p.x < 0) p.x = driftCanvas.width;
+                    if(p.x > driftCanvas.width) p.x = 0;
+                    if(p.y < 0) p.y = driftCanvas.height;
+                    if(p.y > driftCanvas.height) p.y = 0;
+                });
+            }, 30);
+        }
+
+        // ================= SIMULACIÓN 2: RESISTIVIDAD Y MOVILIDAD (MACROSCOPICO) =================
+        let condInterval;
+        let dotsOffset = 0;
+        const curveCanvas = document.getElementById('resistivity-curve-canvas');
+        const curveCtx = curveCanvas.getContext('2d');
+
+        function startConductivitySim() {
+            clearInterval(condInterval);
+            const sliderNd = document.getElementById('cond-nd');
+            const sliderCT = document.getElementById('cond-t');
+
+            condInterval = setInterval(() => {
+                const Nd_log = parseFloat(sliderNd.value);
+                const T = parseFloat(sliderCT.value);
+                const Nd = Math.pow(10, Nd_log);
+
+                document.getElementById('cond-nd-val').textContent = `10^{${Nd_log.toFixed(1)}} cm⁻³`;
+                document.getElementById('cond-t-val').textContent = `${T} K`;
+
+                // ni(T)
+                const Eg0 = 1.17;
+                const alpha = 4.73e-4;
+                const beta = 636;
+                const Eg = Eg0 - (alpha * T * T) / (T + beta);
+                const Nc = Nc300 * Math.pow(T / 300, 1.5);
+                const Nv = Nv300 * Math.pow(T / 300, 1.5);
+                const ni = Math.sqrt(Nc * Nv) * Math.exp(-Eg / (2 * k * T));
+
+                document.getElementById('calc-cond-ni').textContent = ni.toExponential(2) + " cm⁻³";
+
+                const n0 = (Nd / 2) + Math.sqrt(Math.pow(Nd / 2, 2) + Math.pow(ni, 2));
+                const p0 = (ni * ni) / n0;
+
+                const mobs = getMobilitiesRigorous(T, Nd);
+                document.getElementById('calc-cond-mu').textContent = `${mobs.mu_n} cm²/V·s`;
+
+                const sigma = q * (n0 * mobs.mu_n + p0 * mobs.mu_p);
+                const rho = 1 / sigma;
+
+                document.getElementById('calc-sigma').textContent = `${sigma.toExponential(3)} S/cm`;
+                document.getElementById('calc-rho').textContent = `${rho.toFixed(4)} Ω·cm`;
+
+                // Fijamos dimensiones L=1mm (0.1cm) y A=0.1mm2 (0.01cm2) de forma independiente al área de resistividad
+                const L_cm = 0.1;
+                const A_cm2 = 0.01;
+                const R = rho * (L_cm / A_cm2);
+                const I = 5 / R;
+
+                document.getElementById('calc-res').textContent = R > 1e3 ? `${(R/1e3).toFixed(2)} kΩ` : `${R.toFixed(2)} Ω`;
+                document.getElementById('calc-curr').textContent = I < 1e-3 ? `${(I*1e6).toFixed(2)} μA` : `${(I*1000).toFixed(2)} mA`;
+
+                const warningEl = document.getElementById('thermal-warning');
+                if (ni > Nd * 1.5) {
+                    warningEl.classList.remove('hidden');
+                } else {
+                    warningEl.classList.add('hidden');
+                }
+
+                const E_field = 5 / L_cm;
+                const speed = mobs.mu_n * E_field * 0.000005;
+                dotsOffset = (dotsOffset - speed) % 100;
+
+                const dots = document.querySelectorAll('.carrier-dot');
+                dots.forEach((dot, index) => {
+                    const basePosition = (index * (100 / dots.length)) % 100;
+                    const finalLeft = (basePosition + dotsOffset + 100) % 100;
+                    dot.style.left = `${finalLeft}%`;
+                });
+
+                drawResistivityCurve(T, Nd_log, rho);
+
+            }, 30);
+        }
+
+        function drawResistivityCurve(T, current_Nd_log, current_rho) {
+            curveCtx.clearRect(0, 0, curveCanvas.width, curveCanvas.height);
+
+            const marginL = 60;
+            const marginR = 30;
+            const marginT = 30;
+            const marginB = 40;
+
+            const graphW = curveCanvas.width - marginL - marginR;
+            const graphH = curveCanvas.height - marginT - marginB;
+
+            const minX = 11;
+            const maxX = 18;
+            const minY = -3;
+            const maxY = 5;
+
+            function getXPix(val_log) {
+                return marginL + ((val_log - minX) / (maxX - minX)) * graphW;
+            }
+            function getYPix(val_log) {
+                return marginT + graphH - ((val_log - minY) / (maxY - minY)) * graphH;
+            }
+
+            curveCtx.strokeStyle = '#1e293b';
+            curveCtx.lineWidth = 0.5;
+            curveCtx.fillStyle = '#64748b';
+            curveCtx.font = '9px monospace';
+
+            for (let nd = minX; nd <= maxX; nd++) {
+                const x = getXPix(nd);
+                curveCtx.beginPath();
+                curveCtx.moveTo(x, marginT);
+                curveCtx.lineTo(x, marginT + graphH);
+                curveCtx.stroke();
+                curveCtx.fillText(`10¹${nd-10?nd:''}`.replace('10¹11','10¹¹').replace('10¹15','10¹⁵').replace('10¹18','10¹⁸'), x - 10, marginT + graphH + 15);
+            }
+
+            for (let r = minY; r <= maxY; r++) {
+                const y = getYPix(r);
+                curveCtx.beginPath();
+                curveCtx.moveTo(marginL, y);
+                curveCtx.lineTo(marginL + graphW, y);
+                curveCtx.stroke();
+                let label = `10^{${r}}`.replace('^{0}','¹').replace('^{-1}','0.1').replace('^{-2}','0.01').replace('^{-3}','10⁻³').replace('^{1}','10').replace('^{2}','100').replace('^{3}','1k').replace('^{4}','10k').replace('^{5}','100k');
+                curveCtx.fillText(label, marginL - 45, y + 3);
+            }
+
+            curveCtx.strokeStyle = '#475569';
+            curveCtx.lineWidth = 1.5;
+            curveCtx.beginPath();
+            curveCtx.rect(marginL, marginT, graphW, graphH);
+            curveCtx.stroke();
+
+            curveCtx.fillStyle = '#94a3b8';
+            curveCtx.font = 'bold 10px sans-serif';
+            curveCtx.fillText('Dopaje Donor ND (cm⁻³)', marginL + graphW/2 - 60, marginT + graphH + 32);
+
+            curveCtx.save();
+            curveCtx.translate(18, marginT + graphH/2);
+            curveCtx.rotate(-Math.PI / 2);
+            curveCtx.fillText('Resistividad ρ (Ω·cm)', -60, 0);
+            curveCtx.restore();
+
+            curveCtx.strokeStyle = '#10b981';
+            curveCtx.lineWidth = 3.5;
+            curveCtx.beginPath();
+
+            const points = 100;
+            const step = (maxX - minX) / points;
+
+            const Eg0 = 1.17;
+            const alpha_v = 4.73e-4;
+            const beta_v = 636;
+            const Eg = Eg0 - (alpha_v * T * T) / (T + beta_v);
+            const Nc = Nc300 * Math.pow(T / 300, 1.5);
+            const Nv = Nv300 * Math.pow(T / 300, 1.5);
+            const ni = Math.sqrt(Nc * Nv) * Math.exp(-Eg / (2 * k * T));
+
+            for (let i = 0; i <= points; i++) {
+                const nd_l = minX + i * step;
+                const nd_val = Math.pow(10, nd_l);
+
+                const n0_p = (nd_val / 2) + Math.sqrt(Math.pow(nd_val / 2, 2) + Math.pow(ni, 2));
+                const p0_p = (ni * ni) / n0_p;
+
+                const mobs_p = getMobilitiesRigorous(T, nd_val);
+                const sigma_p = q * (n0_p * mobs_p.mu_n + p0_p * mobs_p.mu_p);
+                const rho_p = 1 / sigma_p;
+                const rho_l = Math.log10(rho_p);
+
+                const px = getXPix(nd_l);
+                const py = getYPix(rho_l);
+
+                if (i === 0) curveCtx.moveTo(px, py);
+                else curveCtx.lineTo(px, py);
+            }
+            curveCtx.stroke();
+
+            const targetX = getXPix(current_Nd_log);
+            const targetY = getYPix(Math.log10(current_rho));
+
+            curveCtx.fillStyle = '#f59e0b';
+            curveCtx.shadowColor = '#f59e0b';
+            curveCtx.shadowBlur = 12;
+            curveCtx.beginPath();
+            curveCtx.arc(targetX, targetY, 6, 0, Math.PI * 2);
+            curveCtx.fill();
+            curveCtx.shadowBlur = 0;
+
+            curveCtx.strokeStyle = '#ffffff';
+            curveCtx.lineWidth = 1.5;
+            curveCtx.beginPath();
+            curveCtx.arc(targetX, targetY, 9, 0, Math.PI * 2);
+            curveCtx.stroke();
+        }
+
+        // ================= SIMULACIÓN 3: DIFUSIÓN CON RECOMBINACIÓN COMPLETA =================
+        let diffInterval;
+        let diffCarrierType = 'electron';
+        let diffPulseActive = false;
+        let diffPulseTime = 0;
+        const diffCanvas = document.getElementById('diff-canvas');
+        const diffCtx = diffCanvas.getContext('2d');
+
+        function setDiffCarrier(type) {
+            diffCarrierType = type;
+            const btnE = document.getElementById('diff-car-e');
+            const btnH = document.getElementById('diff-car-h');
+            if (type === 'electron') {
+                btnE.className = "py-2 rounded-lg bg-slate-800 text-xs font-bold text-sky-400 border border-sky-500/50";
+                btnH.className = "py-2 rounded-lg bg-slate-950 text-xs font-bold text-slate-400 border border-slate-800";
+            } else {
+                btnH.className = "py-2 rounded-lg bg-slate-800 text-xs font-bold text-rose-400 border border-rose-500/50";
+                btnE.className = "py-2 rounded-lg bg-slate-950 text-xs font-bold text-slate-400 border border-slate-800";
+            }
+        }
+
+        function injectDiffusionPulse() {
+            diffPulseActive = true;
+            diffPulseTime = 0.05;
+            const stateLabel = document.getElementById('diffusion-status-label');
+            stateLabel.textContent = "Láser ON - Inyección e Inicio de Transporte";
+            stateLabel.className = "text-xs px-2.5 py-1 rounded bg-rose-950 text-rose-300 border border-rose-800";
+        }
+
+        function startDiffusionSim() {
+            clearInterval(diffInterval);
+            const sliderT = document.getElementById('diff-t');
+            const sliderTau = document.getElementById('diff-tau');
+
+            diffInterval = setInterval(() => {
+                const T = parseFloat(sliderT.value);
+                const tau = parseFloat(sliderTau.value);
+                document.getElementById('diff-t-val').textContent = `${T} K`;
+                document.getElementById('diff-tau-val').textContent = `${tau} μs`;
+
+                const mobs = getMobilitiesRigorous(T, 1e15);
+                const mu = diffCarrierType === 'electron' ? mobs.mu_n : mobs.mu_p;
+                const Vt = (k * T);
+                const D = mu * Vt;
+
+                document.getElementById('calc-vt').textContent = `${(Vt*1000).toFixed(1)} mV`;
+                document.getElementById('calc-diff-mu').textContent = `${mu} cm²/V·s`;
+                document.getElementById('calc-diff-d').textContent = `${D.toFixed(2)} cm²/s`;
+
+                diffCtx.clearRect(0, 0, diffCanvas.width, diffCanvas.height);
+
+                diffCtx.strokeStyle = '#1e293b';
+                diffCtx.lineWidth = 1;
+                diffCtx.beginPath();
+                diffCtx.moveTo(40, diffCanvas.height - 40);
+                diffCtx.lineTo(diffCanvas.width - 40, diffCanvas.height - 40);
+                diffCtx.stroke();
+
+                if (diffPulseActive) {
+                    diffPulseTime += 0.015;
+
+                    const time_us = diffPulseTime * 10;
+                    const decay = Math.exp(-time_us / tau);
+
+                    document.getElementById('calc-diff-pct').textContent = `${(decay * 100).toFixed(1)}%`;
+
+                    diffCtx.strokeStyle = diffCarrierType === 'electron' ? '#06b6d4' : '#f43f5e';
+                    diffCtx.shadowColor = diffCtx.strokeStyle;
+                    diffCtx.shadowBlur = 8;
+                    diffCtx.lineWidth = 3;
+                    diffCtx.beginPath();
+
+                    const centerX = diffCanvas.width / 2;
+                    const scaleX = 400;
+
+                    const amplitude = (300 / Math.sqrt(4 * Math.PI * D * diffPulseTime * 0.05)) * decay;
+
+                    for (let x = 40; x < diffCanvas.width - 40; x++) {
+                        const dist = (x - centerX) / scaleX;
+                        const height = amplitude * Math.exp(-Math.pow(dist, 2) / (4 * D * diffPulseTime * 0.005));
+
+                        const drawY = diffCanvas.height - 40 - Math.min(height, 280);
+                        if (x === 40) diffCtx.moveTo(x, drawY);
+                        else diffCtx.lineTo(x, drawY);
+                    }
+                    diffCtx.stroke();
+                    diffCtx.shadowBlur = 0;
+
+                    diffCtx.fillStyle = diffCarrierType === 'electron' ? 'rgba(34, 211, 238, 0.4)' : 'rgba(244, 63, 94, 0.4)';
+                    const numParticles = Math.round(50 * decay);
+                    for(let i=0; i<numParticles; i++) {
+                        const spread = Math.sqrt(2 * D * diffPulseTime * 200);
+                        const u1 = Math.random() || 0.0001;
+                        const u2 = Math.random();
+                        const gaussRand = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+                        const px = centerX + gaussRand * spread;
+                        const py = diffCanvas.height - 40 - Math.random() * Math.max(5, amplitude * 0.6);
+
+                        if (px > 40 && px < diffCanvas.width - 40 && py < diffCanvas.height - 40) {
+                            diffCtx.beginPath();
+                            diffCtx.arc(px, py, 3, 0, Math.PI*2);
+                            diffCtx.fill();
+                        }
+                    }
+
+                    if (decay < 0.01 || diffPulseTime > 5.0) {
+                        diffPulseActive = false;
+                        const stateLabel = document.getElementById('diffusion-status-label');
+                        stateLabel.textContent = "Terminado - Retorno Completo al Equilibrio Térmico";
+                        stateLabel.className = "text-xs px-2.5 py-1 rounded bg-slate-950 text-slate-400 border border-slate-800";
+                    }
+                } else {
+                    document.getElementById('calc-diff-pct').textContent = "0.0%";
+                    diffCtx.fillStyle = '#475569';
+                    diffCtx.font = 'bold 13px sans-serif';
+                    diffCtx.fillText('Pulsa el botón "INYECTAR PULSO LÁSER" para inyectar portadores', 120, diffCanvas.height / 2);
+                }
+
+                diffCtx.fillStyle = '#64748b';
+                diffCtx.font = '10px monospace';
+                diffCtx.fillText('x = 0', 35, diffCanvas.height - 20);
+                diffCtx.fillText('x = L', diffCanvas.width - 65, diffCanvas.height - 20);
+
+            }, 30);
+        }
+
+        // ================= SIMULACIÓN 4: RECOMBINACIÓN Y GENERACIÓN =================
+        let recInterval;
+        let lightOn = false;
+        let excessCarrier = 0;
+        let recTime = 0;
+        let recPoints = [];
+        const recCanvas = document.getElementById('rec-canvas');
+        const recCtx = recCanvas.getContext('2d');
+
+        function toggleLight() {
+            lightOn = !lightOn;
+            const btn = document.getElementById('btn-light');
+            const stateLabel = document.getElementById('transient-state-label');
+            if (lightOn) {
+                btn.textContent = "ON";
+                btn.className = "px-6 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-black border border-amber-400 tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.4)] transition duration-300";
+                stateLabel.textContent = "Perturbación Activa: Fotogeneración en Desequilibrio";
+                stateLabel.className = "text-xs px-2.5 py-1 rounded bg-amber-950/40 text-amber-300 border border-amber-900/50";
+            } else {
+                btn.textContent = "OFF";
+                btn.className = "px-6 py-2.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-black border border-slate-700 tracking-widest transition duration-300";
+                stateLabel.textContent = "Perturbación Apagada: Decaimiento de Minoritarios";
+                stateLabel.className = "text-xs px-2.5 py-1 rounded bg-slate-950 text-slate-400 border border-slate-800";
+            }
+        }
+
+        function startRecombinationSim() {
+            clearInterval(recInterval);
+            recPoints = [];
+            excessCarrier = 0;
+            recTime = 0;
+
+            const sliderTau = document.getElementById('rec-tau');
+            const sliderGl = document.getElementById('rec-gl');
+
+            recInterval = setInterval(() => {
+                const tau = parseFloat(sliderTau.value);
+                const gl_log = parseFloat(sliderGl.value);
+                const gL = Math.pow(10, gl_log);
+
+                const tau_scale = tau * 0.15;
+                const gL_scale = gL * 1e-11;
+
+                document.getElementById('rec-tau-val').textContent = `${tau} μs`;
+                document.getElementById('rec-gl-val').textContent = `10¹${gl_log.toString().split('.') ? '⁶' : ''} cm⁻³/s`.replace('10¹15', '10¹⁵').replace('10¹16', '10¹⁶').replace('10¹17', '10¹⁷').replace('.0','');
+
+                if (lightOn) {
+                    excessCarrier += (gL_scale - (excessCarrier / tau_scale)) * 0.1;
+                } else {
+                    excessCarrier += (0 - (excessCarrier / tau_scale)) * 0.1;
+                }
+
+                const max_excess_calc = gL * (tau * 1e-6);
+                const current_excess_calc = excessCarrier * 1e11;
+                document.getElementById('calc-ex-max').textContent = max_excess_calc.toExponential(2) + " cm⁻³";
+                document.getElementById('calc-ex-curr').textContent = current_excess_calc.toExponential(2) + " cm⁻³";
+
+                recPoints.push({ x: recTime, y: excessCarrier });
+                if (recPoints.length > 100) recPoints.shift();
+
+                recTime += 1.5;
+
+                recCtx.clearRect(0, 0, recCanvas.width, recCanvas.height);
+
+                recCtx.strokeStyle = '#1e293b';
+                recCtx.lineWidth = 0.5;
+                for (let x = 40; x < recCanvas.width; x += 50) {
+                    recCtx.beginPath();
+                    recCtx.moveTo(x, 20);
+                    recCtx.lineTo(x, recCanvas.height - 40);
+                    recCtx.stroke();
+                }
+                for (let y = 20; y < recCanvas.height - 40; y += 50) {
+                    recCtx.beginPath();
+                    recCtx.moveTo(40, y);
+                    recCtx.lineTo(recCanvas.width - 20, y);
+                    recCtx.stroke();
+                }
+
+                recCtx.strokeStyle = '#475569';
+                recCtx.lineWidth = 1.5;
+                recCtx.beginPath();
+                recCtx.moveTo(40, 20);
+                recCtx.lineTo(40, recCanvas.height - 40);
+                recCtx.lineTo(recCanvas.width - 20, recCanvas.height - 40);
+                recCtx.stroke();
+
+                if (recPoints.length > 1) {
+                    recCtx.strokeStyle = '#f59e0b';
+                    recCtx.shadowColor = '#f59e0b';
+                    recCtx.shadowBlur = 8;
+                    recCtx.lineWidth = 3.5;
+                    recCtx.beginPath();
+
+                    recPoints.forEach((p, index) => {
+                        const drawX = 40 + (index * (recCanvas.width - 80) / 100);
+                        const drawY = (recCanvas.height - 40) - p.y * 12;
+
+                        if (index === 0) recCtx.moveTo(drawX, drawY);
+                        else recCtx.lineTo(drawX, drawY);
+                    });
+                    recCtx.stroke();
+                    recCtx.shadowBlur = 0;
+                }
+
+                recCtx.fillStyle = '#94a3b8';
+                recCtx.font = '10px monospace';
+                recCtx.fillText('Tiempo t', recCanvas.width - 70, recCanvas.height - 20);
+
+                recCtx.save();
+                recCtx.translate(25, recCanvas.height / 2);
+                recCtx.rotate(-Math.PI / 2);
+                recCtx.fillText('Exceso de Portadores p\'(t)', -80, 0);
+                recCtx.restore();
+
+            }, 30);
+        }
+
+        // Registrar listeners para Resistividad y Movilidad de la pestaña 2
+        const sliderNd = document.getElementById('cond-nd');
+        const sliderCT = document.getElementById('cond-t');
+        sliderNd.addEventListener('input', startConductivitySim);
+        sliderCT.addEventListener('input', startConductivitySim);
+
+        // Inicializar por defecto la primera pestaña
+        switchTab('drift');
+    </script>
+<footer class="sim-footer">
+    <p><strong>Física de los Semiconductores</strong> </p>
+    <p> José Luis Bossa </p>
+    <p> Facultad de Ingeniería y Ciencias Agropecuarias (FICA) - Universidad Nacional de San Luis </p>
+</footer>
+</body>
+</html>

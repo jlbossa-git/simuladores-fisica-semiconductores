@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Física de los Semiconductores - Laboratorio Virtual</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
+            --accent-cyan: #38bdf8;
+            --accent-amber: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* Header / Branding */
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.025em;
+        }
+
+        header h2 {
+            font-size: 1.25rem;
+            font-weight: 400;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .meta-info {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            color: var(--accent-amber);
+            font-weight: 600;
+        }
+
+        .meta-info span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(245, 158, 11, 0.1);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        /* Buscador */
+        .search-container {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 1rem 1.2rem 1rem 3rem;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-container input:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        /* Grid de Simuladores */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            background-color: var(--bg-card-hover);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 12px 20px -5px rgba(56, 189, 248, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--accent-cyan);
+            padding: 0.8rem;
+            border-radius: 10px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-title-group h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.25rem;
+        }
+
+        .card-description {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .card-footer i {
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover .card-footer i {
+            transform: translateX(4px);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            padding-top: 3rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            header h1 { font-size: 1.8rem; }
+            header h2 { font-size: 1rem; }
+            .meta-info { flex-direction: column; gap: 0.5rem; align-items: center; }
+        }
+    </style>
+<!-- Renderizador de ecuaciones MathJax -->
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Encabezado Institucional -->
+        <header>
+            <h1>Física de los Semiconductores</h1>
+            <h2>Repositorio de Simuladores Interactivos y Laboratorio Virtual</h2>
+            
+            <div class="meta-info">
+                <span><i class="fa-solid fa-university"></i> Universidad Nacional de San Luis</span>
+                <span><i class="fa-solid fa-graduation-cap"></i> Facultad de Ingeniería y Ciencias Agropecuarias</span>
+                <span><i class="fa-solid fa-user-tie"></i> José Luis Bossa</span>
+            </div>
+        </header>
+
+        <!-- Buscador en Tiempo Real -->
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" placeholder="Buscar simulador por concepto o tema..." onkeyup="filterSimulators()">
+        </div>
+
+        <!-- Grilla de Simuladores -->
+        <div class="grid" id="simulatorGrid">
+
+            <!-- Simulador 1 -->
+            <a href="unidad1_modelo_clasico_vs_bohr.html" class="card" data-title="Modelo Clásico vs. Bohr">
+                <div class="card-header">
+                    <div class="card-icon"><i class="fa-solid fa-atom"></i></div>
+                    <div class="card-title-group">
+                        <h3>Modelo Clásico vs. Bohr</h3>
+                    </div>
+                </div>
+                <p class="card-description">Comparativa interactiva entre el modelo atómico clásico y la cuantización de órbitas de Bohr en átomos semiconductores.</p>
+                <div class="card-footer">
+                    <span>Iniciar Simulación</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <!-- Simulador 2 -->
+            <a href="unidad2_simulador_fermi.html" class="card" data-title="Dinámica del Nivel de Fermi">
+                <div class="card-header">
+                    <div class="card-icon"><i class="fa-solid fa-chart-line"></i></div>
+                    <div class="card-title-group">
+                        <h3>Dinámica del Nivel de Fermi</h3>
+                    </div>
+                </div>
+                <p class="card-description">Visualización de las bandas de energía, ocupación electrónica, efecto de la temperatura y corrimiento de $E_F$ por dopaje.</p>
+                <div class="card-footer">
+                    <span>Iniciar Simulación</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <!-- Simulador 3 -->
+            <a href="unidad3_simuladores_transporte.html" class="card" data-title="Transporte de Portadores">
+                <div class="card-header">
+                    <div class="card-icon"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="card-title-group">
+                        <h3>Transporte de Portadores</h3>
+                    </div>
+                </div>
+                <p class="card-description">Simulación de los mecanismos de Arrastre (Drift) y Difusión (Diffusion), movilidad microscópica y relación de Einstein.</p>
+                <div class="card-footer">
+                    <span>Iniciar Simulación</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <!-- Simulador 4 -->
+            <a href="unidad4_simulacion_diodo.html" class="card" data-title="Característica I-V del Diodo">
+                <div class="card-header">
+                    <div class="card-icon"><i class="fa-solid fa-wave-square"></i></div>
+                    <div class="card-title-group">
+                        <h3>Característica I-V del Diodo</h3>
+                    </div>
+                </div>
+                <p class="card-description">Curva corriente-voltaje exponencial, régimen de polarización directa, inversa y efecto de la temperatura.</p>
+                <div class="card-footer">
+                    <span>Iniciar Simulación</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <!-- Simulador 5 -->
+            <a href="unidad4_simulacion_pn.html" class="card" data-title="Dinámica de la Juntura PN">
+                <div class="card-header">
+                    <div class="card-icon"><i class="fa-solid fa-border-all"></i></div>
+                    <div class="card-title-group">
+                        <h3>Dinámica de la Juntura PN</h3>
+                    </div>
+                </div>
+                <p class="card-description">Zona de agotamiento, distribución de carga espacial, campo eléctrico interno y barrera de potencial $V_0$.</p>
+                <div class="card-footer">
+                    <span>Iniciar Simulación</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <!-- Simulador 6 -->
+            <a href="unidad5_simulacion_bjt.html" class="card" data-title="Transistor Bipolar (BJT)">
+                <div class="card-header">
+                    <div class="card-icon"><i class="fa-solid fa-microchip"></i></div>
+                    <div class="card-title-group">
+                        <h3>Transistor Bipolar (BJT)</h3>
+                    </div>
+                </div>
+                <p class="card-description">Regiones de operación (corte, activa y saturación), corrientes de inyección de minoritarios y modulación del ancho de base.</p>
+                <div class="card-footer">
+                    <span>Iniciar Simulación</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <!-- Simulador 7 -->
+            <a href="unidad6_simulacion_jfet.html" class="card" data-title="Transistor JFET">
+                <div class="card-header">
+                    <div class="card-icon"><i class="fa-solid fa-sliders"></i></div>
+                    <div class="card-title-group">
+                        <h3>Transistor JFET</h3>
+                    </div>
+                </div>
+                <p class="card-description">Efecto de campo por juntura PN, estrangulamiento de canal (Pinch-off), tensión de corte $V_P$ y conductancia.</p>
+                <div class="card-footer">
+                    <span>Iniciar Simulación</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <!-- Simulador 8 -->
+        <a href="unidad7_simulacion_mosfet.html" class="card" data-title="Transistor MOSFET y Estructura MOS">
+                <div class="card-header">
+                    <div class="card-icon"><i class="fa-solid fa-layer-group"></i></div>
+                    <div class="card-title-group">
+                        <h3>Estructura MOS y Transistor MOSFET</h3>
+                    </div>
+                </div>
+                <p class="card-description">Regímenes de acumulación, deplexión e inversión, tensión de umbral $V_T$, formación de canal N y curvas $I_D-V_{DS}$.</p>
+                <div class="card-footer">
+                    <span>Iniciar Simulación</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+
+            <!-- Simulador 9 -->
+              <a href="unidad7_simulacion_jfet_vs_mosfet.html" class="card" data-title="Comparativa JFET vs. MOSFET">
+                <div class="card-header">
+                    <div class="card-icon"><i class="fa-solid fa-code-compare"></i></div>
+                    <div class="card-title-group">
+                        <h3>Comparativa JFET vs. MOSFET</h3>
+                    </div>
+                </div>
+                <p class="card-description">Análisis comparativo de impedancias de entrada, curvas de transferencia, estructuras aisladas (MOS) vs. juntura y aplicaciones.</p>
+                <div class="card-footer">
+                    <span>Iniciar Simulación</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+        </div>
+
+        <!-- Footer Estandarizado Institucional -->
+<footer class="sim-footer">
+    <p><strong>Física de los Semiconductores</strong> </p>
+    <p> José Luis Bossa </p>
+    <p> Facultad de Ingeniería y Ciencias Agropecuarias (FICA) - Universidad Nacional de San Luis </p>
+</footer>
+
+<style>
+    .sim-footer {
+        margin-top: 3rem;
+        padding: 1.5rem 1rem;
+        text-align: center;
+        background-color: #0f172a;
+        color: #94a3b8;
+        font-family: system-ui, -apple-system, sans-serif;
+        font-size: 0.85rem;
+        border-top: 1px solid #334155;
+    }
+    .sim-footer p {
+        margin: 0.2rem 0;
+    }
+    .sim-footer strong {
+        color: #38bdf8;
+    }
+</style>
+    </div>
+
+    <!-- Script de Filtro -->
+    <script>
+        function filterSimulators() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.card');
+
+            cards.forEach(card => {
+                const title = card.getAttribute('data-title').toLowerCase();
+                const description = card.querySelector('.card-description').innerText.toLowerCase();
+
+                if (title.includes(input) || description.includes(input)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Renderizador de LaTeX (MathJax) -->
+<script>
+  MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transistor JFET</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0b0f1a; color: #f8fafc; }
+        .tab-btn.active { background-color: #1e293b; border-color: #38bdf8; color: #38bdf8; }
+        input[type=range] { accent-color: #38bdf8; }
+    </style>
+    <link rel="stylesheet" href="assets/css/tema.css">
+</head>
+<body class="p-4 md:p-6 font-sans">
+    <!-- Botón Flotante para Volver al Portal (Misma Carpeta) -->
+<a href="index.html" class="btn-volver-portal">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+    </svg>
+    Volver al Portal
+</a>
+
+<style>
+    .btn-volver-portal {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 9999;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        background-color: #1e293b;
+        color: #38bdf8;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        text-decoration: none;
+        font-family: system-ui, -apple-system, sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        transition: all 0.2s ease;
+    }
+
+    .btn-volver-portal:hover {
+        background-color: #334155;
+        border-color: #38bdf8;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(56, 189, 248, 0.25);
+    }
+</style>
+
+            <div class="max-w-6xl mx-auto">
+        <!-- Encabezado -->
+        <header class="mb-6 border-b border-slate-700 pb-4 text-center md:text-left">
+              <p class="subtitle">Física de los Semiconductores - FICA (UNSL)</p>
+
+            <h1 class="text-3xl font-extrabold text-sky-400">Transistor JFET</h1>
+            <p class="text-slate-400 mt-1">Simulador Interactivo: Operación, Polarización y Características</p>
+        </header>
+
+
+
+        <!-- Navegación por Pestañas -->
+        <div class="flex flex-wrap gap-2 mb-6 border-b border-slate-800 pb-4">
+            <button onclick="switchTab('tab1')" id="btn-tab1" class="tab-btn active px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900 text-xs md:text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
+                <span>📐</span> 1. Pinch-off por $V_{GS} (V_{DS}=0)$
+            </button>
+            <button onclick="switchTab('tab2')" id="btn-tab2" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900 text-xs md:text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
+                <span>🌊</span> 2. Flujo de Cargas, Estrangulamiento y Campo Eléctrico
+            </button>
+            <button onclick="switchTab('tab3')" id="btn-tab3" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900 text-xs md:text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
+                <span>📈</span> 3. Curvas $I_D-V_{DS}$ y Transferencia
+            </button>
+            <button onclick="switchTab('tab4')" id="btn-tab4" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900 text-xs md:text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
+                <span>⚡</span> 4. Conductancia, $g_m$ y Amplificador
+            </button>
+            <button onclick="switchTab('tab5')" id="btn-tab5" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900 text-xs md:text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
+                <span>🛡️</span> 5. Simulador de Alta Impedancia de Entrada
+            </button>
+        </div>
+
+        <!-- ================= MÓDULO 1: PINCH-OFF POR VGS ================= -->
+        <section id="content-tab1" class="tab-content grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-sky-400 mb-4">⚙️ Tensión de Compuerta $V_{GS}$ con $(V_{DS} = 0V)$</h3>
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1">
+                            <label class="text-xs font-semibold text-slate-300">Tensión Compuerta-Fuente ($V_{GS}$):</label>
+                            <span class="text-sm font-mono text-cyan-400 font-bold" id="t1-vgs-val">0.00 V</span>
+                        </div>
+                        <input type="range" id="t1-vgs" min="-4.0" max="0.0" step="0.05" value="0.00" class="w-full accent-cyan-500">
+                    </div>
+                    
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono space-y-2.5 mt-4">
+                        <div class="flex justify-between"><span class="text-slate-500">Tensión de Estrangulamiento $(V_P)$:</span><span class="text-amber-400 font-bold">-4.00 V</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Ancho Semicanal Efectivo (a - h):</span><span class="text-emerald-400 font-bold" id="t1-ch-width">1.00 μm (Abierto)</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Cargas Fijas en ZCE:</span><span class="text-rose-400 font-bold">Iones N_D⁺ e Iones N_A⁻</span></div>
+                        <div class="flex justify-between border-t border-slate-900 pt-1.5"><span class="text-slate-300 font-bold">Estado del Canal N:</span><span class="text-sky-400 font-extrabold uppercase text-xs" id="t1-canal-state">CONDUCTOR (ABIERTO)</span></div>
+                    </div>
+                </div>
+                <p class="text-[11px] text-slate-500 italic mt-4">
+                    <strong>Formación de la ZCE y Expulsión de Cargas:</strong> Al aplicar $V_{GS} < 0$, la juntura $P^+N$ en polarización inversa ensancha la Zona de Carga Espacial (ZCE), expulsando a los electrones libres ($e^-$). Quedan descubiertos los iones donores fijos ($N_D^+$ en el canal) y aceptores ($N_A^-$ en el gate). Al alcanzar $V_{GS} = V_P = -4\text{ V}$, ambas ZCE se tocan en el centro vaciando el canal de portadores móviles (*modelo ideal con $V_{bi} \ll |V_P|$*).
+                </p>
+            </div>
+            
+            <div class="lg:col-span-8 bg-slate-900/60 p-6 rounded-2xl border border-slate-800">
+                <h4 class="font-bold text-white mb-2 text-sm">Corte Transversal con Etiquetas Completas (D, S, G, $V_{GS}$, ZCE e Iones Fijos)</h4>
+                <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center" style="height: 400px;">
+                    <canvas id="t1-canvas-channel" width="650" height="380" class="w-full h-full max-w-[650px]"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MÓDULO 2: ESTRANGULAMIENTO Y CAMPO ELÉCTRICO ================= -->
+        <section id="content-tab2" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-amber-400 mb-4">⚙️ Fuentes Externas $V_{GS}$ y $V_{DS}$</h3>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1"><label class="text-xs font-semibold text-slate-300">Fuente Compuerta ($V_{GS}$):</label><span class="text-sm font-mono text-cyan-400 font-bold" id="t2-vgs-val">-1.00 V</span></div>
+                        <input type="range" id="t2-vgs" min="-3.5" max="0.0" step="0.5" value="-1.00" class="w-full accent-cyan-500">
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1"><label class="text-xs font-semibold text-slate-300">Fuente Drenador (VDS):</label><span class="text-sm font-mono text-amber-400 font-bold" id="t2-vds-val">2.00 V</span></div>
+                        <input type="range" id="t2-vds" min="0.0" max="8.0" step="0.1" value="2.00" class="w-full accent-amber-500">
+                    </div>
+
+                    <!-- Interruptor para Visualizar el Campo Eléctrico -->
+                    <div class="mb-4 bg-slate-950/80 p-3 rounded-xl border border-sky-900/50 flex items-center justify-between">
+                        <span class="text-xs font-bold text-sky-300 flex items-center gap-1.5">
+                            <span>⚡</span> Ver Vectores de Campo Eléctrico (E)
+                        </span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="t2-show-efield" class="sr-only peer" checked>
+                            <div class="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-sky-500"></div>
+                        </label>
+                    </div>
+
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono space-y-2.5">
+                        <div class="flex justify-between"><span class="text-slate-500">VDS de Saturación VDS(sat):</span><span class="text-amber-400 font-bold" id="t2-vdssat-out">3.00 V</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Tensión Inversa en Drain VDG:</span><span class="text-rose-400 font-bold" id="t2-vdg-out">3.00 V</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Velocidad de Electrones (ve):</span><span class="text-sky-400 font-bold" id="t2-ve-out">Media (Drift)</span></div>
+                        <div class="flex justify-between border-t border-slate-900 pt-1.5"><span class="text-slate-300 font-bold">Región del JFET:</span><span class="text-emerald-400 font-extrabold text-xs uppercase" id="t2-region-out">REGIÓN ÓHMICA</span></div>
+                        <div class="flex justify-between"><span class="text-slate-300 font-bold">Corriente de Drenador ID:</span><span class="text-emerald-400 font-extrabold text-sm" id="t2-id-out">4.10 mA</span></div>
+                    </div>
+                </div>
+                <p class="text-[11px] text-slate-500 italic mt-4">
+                    <strong>El Origen del "Efecto de Campo" (FET):</strong><br>
+                    • <strong class="text-purple-400">Campo Transversal $\vec{E}_y$ (Compuerta):</strong> Apunta desde los iones positivos del canal ($N_D^+$) hacia las compuertas negativas ($P^+$). Controla electrostáticamente la apertura del canal.<br>
+                    • <strong class="text-amber-400">Campo Longitudinal $\vec{E}_x$ (Drenador):</strong> Apunta de D a S, arrastrando a los electrones en sentido contrario ($S \to D$).
+                </p>
+            </div>
+
+            <div class="lg:col-span-8 bg-slate-900/60 p-6 rounded-2xl border border-slate-800">
+                <h4 class="font-bold text-white mb-2 text-sm">Visualización Dinámica del Campo Eléctrico $\vec{E}$ y Portadores ($e^-$)</h4>
+                <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center" style="height: 400px;">
+                    <canvas id="t2-canvas-wedge" width="650" height="380" class="w-full h-full max-w-[650px]"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MÓDULO 3: CURVAS CARACTERÍSTICAS ================= -->
+        <section id="content-tab3" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-emerald-400 mb-4">⚙️ Controles del Punto Q</h3>
+                    
+                    <div class="mb-3">
+                        <div class="flex justify-between mb-1"><label class="text-xs font-semibold text-slate-300">Tensión VGS:</label><span class="text-xs font-mono text-cyan-400 font-bold" id="t3-vgs-val">-1.50 V</span></div>
+                        <input type="range" id="t3-vgs" min="-4.0" max="0.0" step="0.1" value="-1.50" class="w-full accent-cyan-500">
+                    </div>
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1"><label class="text-xs font-semibold text-slate-300">Tensión VDS:</label><span class="text-xs font-mono text-amber-400 font-bold" id="t3-vds-val">6.00 V</span></div>
+                        <input type="range" id="t3-vds" min="0.0" max="15.0" step="0.2" value="6.00" class="w-full accent-amber-500">
+                    </div>
+
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono space-y-2">
+                        <div class="flex justify-between"><span class="text-slate-500">Corriente IDSS (VGS=0):</span><span class="text-amber-400 font-bold">10.0 mA</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Tensión Pinch-off VP:</span><span class="text-amber-400 font-bold">-4.00 V</span></div>
+                        <div class="flex justify-between border-t border-slate-900 pt-1"><span class="text-slate-500">Corriente Q (IDQ):</span><span class="text-emerald-400 font-bold" id="t3-idq-out">3.91 mA</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Zona de Operación:</span><span class="text-sky-400 font-bold" id="t3-zone-out">SATURACIÓN</span></div>
+                    </div>
+                </div>
+                <p class="text-[11px] text-slate-500 italic mt-4">
+                    <strong>Relación Parabólica de Shockley:</strong> En la región de saturación ($V_{DS} \ge V_{DS(sat)}$), la corriente responde a $I_D = I_{DSS} \left(1 - \frac{V_{GS}}{V_P}\right)^2$. El punto de operación $Q$ se correlaciona simultáneamente en la familia de salida y en la parábola de transferencia.
+                </p>
+            </div>
+
+            <div class="lg:col-span-8 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+                        <h4 class="font-bold text-white mb-2 text-xs">Familia de Salida ID vs VDS</h4>
+                        <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center" style="height: 310px;">
+                            <canvas id="t3-canvas-output" width="300" height="300" class="w-full h-full max-w-[300px]"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+                        <h4 class="font-bold text-white mb-2 text-xs">Transferencia ID vs VGS (Shockley)</h4>
+                        <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center" style="height: 310px;">
+                            <canvas id="t3-canvas-transfer" width="300" height="300" class="w-full h-full max-w-[300px]"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MÓDULO 4: CONDUCTANCIA, TRANSCONDUCTANCIA Y AMPLIFICADOR ================= -->
+        <section id="content-tab4" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-sky-400 mb-4">⚙️ Parámetros de Polarización y Carga</h3>
+                    
+                    <div class="mb-3">
+                        <div class="flex justify-between mb-1"><label class="text-xs font-semibold text-slate-300">Tensión Polarización $V_{GS}$:</label><span class="text-xs font-mono text-cyan-400 font-bold" id="t4-vgs-val">-1.00 V</span></div>
+                        <input type="range" id="t4-vgs" min="-4.0" max="0.0" step="0.1" value="-1.00" class="w-full accent-cyan-500">
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="flex justify-between mb-1"><label class="text-xs font-semibold text-slate-300">Resistencia de Carga $R_D$:</label><span class="text-xs font-mono text-amber-400 font-bold" id="t4-rd-val">2.2 kΩ</span></div>
+                        <input type="range" id="t4-rd" min="0.5" max="10.0" step="0.1" value="2.2" class="w-full accent-amber-500">
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1"><label class="text-xs font-semibold text-slate-300">Señal de Entrada $(V_{in}-pp)$:</label><span class="text-xs font-mono text-sky-400 font-bold" id="t4-vin-val">100 mV</span></div>
+                        <input type="range" id="t4-vin" min="10" max="400" step="10" value="100" class="w-full accent-sky-500">
+                    </div>
+
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono space-y-2">
+                        <div class="flex justify-between"><span class="text-slate-500">Transconductancia $g_m$:</span><span class="text-sky-400 font-bold" id="t4-gm-out">3.75 mS</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Ganancia de Tensión $|A_v| = g_m \cdot R_D$:</span><span class="text-emerald-400 font-extrabold text-sm" id="t4-av-out">8.25x (18.3 dB)</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Señal de Salida $(V_{out}-pp)$:</span><span class="text-emerald-400 font-bold" id="t4-vout-out">825 mV</span></div>
+                        <div class="flex justify-between border-t border-slate-900 pt-1.5"><span class="text-slate-500">Conductancia Óhmica $g_d$:</span><span class="text-amber-400 font-bold" id="t4-gd-out">3.75 mS</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Resistencia de Canal $r_{ds}$:</span><span class="text-slate-300 font-bold" id="t4-rds-out">267 Ω</span></div>
+                    </div>
+                </div>
+                <p class="text-[11px] text-slate-500 italic mt-4">
+                    <strong>Poder de Amplificación:</strong> La compuerta no consume corriente ($I_G \approx 0 \implies P_{in} \approx 0$), permitiendo ganancias de potencia teóricas enormes ($A_P \to \infty$). Una diminuta excursión de tensión en compuerta modula la corriente $i_d = g_m \cdot v_{in}$, generando sobre $R_D$ una réplica amplificada con desfase de $180^\circ$.
+                </p>
+            </div>
+
+            <div class="lg:col-span-8 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Osciloscopio en Vivo -->
+                    <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+                        <h4 class="font-bold text-white mb-2 text-xs flex justify-between">
+                            <span>Osciloscopio: CH1 (Entrada) vs CH2 (Salida)</span>
+                            <span class="text-emerald-400 font-mono" id="t4-scope-tag">Av = -8.3x</span>
+                        </h4>
+                        <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center" style="height: 310px;">
+                            <canvas id="t4-canvas-scope" width="300" height="300" class="w-full h-full max-w-[300px]"></canvas>
+                        </div>
+                    </div>
+                    <!-- Curva de Transconductancia -->
+                    <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+                        <h4 class="font-bold text-white mb-2 text-xs">Curva gm(VGS) y Resistencia rds(VGS)</h4>
+                        <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center" style="height: 310px;">
+                            <canvas id="t4-canvas-gm" width="300" height="300" class="w-full h-full max-w-[300px]"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MÓDULO 5: SIMULADOR DE ALTA IMPEDANCIA ================= -->
+        <section id="content-tab5" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-5 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-rose-400 mb-4">⚙️ Medidor de Corriente de Fuga $(I_{GSS})$</h3>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1"><label class="text-xs font-semibold text-slate-300">Tensión Inversa de Gate $(V_{GS})$:</label><span class="text-sm font-mono text-cyan-400 font-bold" id="t5-vgs-val">-5.00 V</span></div>
+                        <input type="range" id="t5-vgs" min="-10.0" max="0.0" step="0.5" value="-5.00" class="w-full accent-cyan-500">
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1"><label class="text-xs font-semibold text-slate-300">Temperatura del Cristal $(T)$:</label><span class="text-sm font-mono text-rose-400 font-bold" id="t5-temp-val">300 K (27°C)</span></div>
+                        <input type="range" id="t5-temp" min="250" max="400" step="5" value="300" class="w-full accent-rose-500">
+                    </div>
+
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono space-y-2.5">
+                        <div class="flex justify-between"><span class="text-slate-500">Corriente Fuga de Gate $(I_{GSS})$:</span><span class="text-rose-400 font-bold text-sm" id="t5-igss-out">10.0 pA</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Impedancia Entrada $(R_{in} = |V_{GS}|/I_{GSS})$:</span><span class="text-emerald-400 font-extrabold text-sm" id="t5-rin-out">500.0 GΩ</span></div>
+                        <div class="flex justify-between border-t border-slate-900 pt-1.5"><span class="text-slate-300 font-bold">Comparación con BJT (IB):</span><span class="text-amber-400 font-bold">JFET es >1.000.000x más alta</span></div>
+                    </div>
+                </div>
+                <p class="text-[11px] text-slate-500 italic mt-4">
+                    <strong>Física de la Alta Impedancia:</strong> Al estar la juntura en inversa, solo circula la corriente de generación térmica de pares $e^--h^+$ en la ZCE ($I_{GSS} \sim \text{pA}$). Aunque se duplica aproximadamente cada $10^\circ\text{C}$, $R_{in}$ permanece en el rango de los $\text{G}\Omega$, a diferencia del BJT donde la juntura $BE$ en directa demanda microamperios continuos.
+                </p>
+            </div>
+
+            <div class="lg:col-span-7 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <h4 class="font-bold text-white mb-2 text-sm">Circuito de Medición Dinámico: Amperímetro Ultra-Sensible y Comparativa BJT vs JFET</h4>
+                <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center" style="height: 380px;">
+                    <canvas id="t5-canvas-impedance" width="550" height="360" class="w-full h-full max-w-[550px]"></canvas>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- MathJax -->
+    <script>
+        window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] } };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Motor JavaScript Integrado y Robusto -->
+    <script>
+        let activeTab = 'tab1';
+        let animPhaseT1 = 0;
+        let animPhaseT2 = 0;
+        let animPhaseScope = 0;
+
+        function safeTypeset() {
+            if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+                window.MathJax.typesetPromise().catch((err) => console.warn('MathJax error:', err));
+            }
+        }
+
+        function switchTab(tabId) {
+            activeTab = tabId;
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+            const targetContent = document.getElementById(`content-${tabId}`);
+            const targetBtn = document.getElementById(`btn-${tabId}`);
+            if (targetContent) targetContent.classList.remove('hidden');
+            if (targetBtn) targetBtn.classList.add('active');
+
+            if (tabId === 'tab1') updateT1();
+            else if (tabId === 'tab2') updateT2();
+            else if (tabId === 'tab3') updateT3();
+            else if (tabId === 'tab4') updateT4();
+            else if (tabId === 'tab5') updateT5();
+
+            safeTypeset();
+        }
+
+        // ================= MÓDULO 1 =================
+        function updateT1() {
+            const vgsInput = document.getElementById('t1-vgs');
+            if (!vgsInput) return;
+            const Vgs = parseFloat(vgsInput.value);
+            
+            const vgsValElem = document.getElementById('t1-vgs-val');
+            if (vgsValElem) vgsValElem.textContent = Vgs.toFixed(2) + " V";
+
+            const Vp = -4.0;
+            const ratio = Math.min(1.0, Math.max(0.0, Vgs / Vp));
+            const h = Math.sqrt(ratio);
+            const ch_eff = 1.0 - h;
+
+            const chWidthElem = document.getElementById('t1-ch-width');
+            if (chWidthElem) chWidthElem.textContent = `${ch_eff.toFixed(2)} μm ` + (ch_eff < 0.05 ? "(CERRADO / PINCH-OFF)" : "(ABIERTO)");
+            
+            const stateElem = document.getElementById('t1-canal-state');
+            if (stateElem) {
+                if (ch_eff < 0.05) {
+                    stateElem.textContent = "ESTRANGULADO / PINCH-OFF (VACÍO DE CARGAS MÓVILES)";
+                    stateElem.className = "text-rose-400 font-extrabold uppercase text-xs";
+                } else {
+                    stateElem.textContent = "CONDUCTOR (ELECTRONES LIBRES EN CANAL N)";
+                    stateElem.className = "text-sky-400 font-extrabold uppercase text-xs";
+                }
+            }
+
+            drawT1Channel(h);
+        }
+
+        function drawT1Channel(h_ratio) {
+            const canvas = document.getElementById('t1-canvas-channel');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const x0 = 90, w = 460, y0 = 70, h_chan = 220;
+            const midY = y0 + h_chan / 2;
+
+            ctx.fillStyle = '#082f49'; ctx.fillRect(x0, y0, w, h_chan);
+            ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2; ctx.strokeRect(x0, y0, w, h_chan);
+
+            const zce_h = (h_chan / 2) * h_ratio;
+
+            ctx.fillStyle = '#431407';
+            ctx.fillRect(x0 + 80, y0 - 35, 300, 35);
+            ctx.fillRect(x0 + 80, y0 + h_chan, 300, 35);
+
+            ctx.strokeStyle = '#f97316'; ctx.lineWidth = 2;
+            ctx.strokeRect(x0 + 80, y0 - 35, 300, 35);
+            ctx.strokeRect(x0 + 80, y0 + h_chan, 300, 35);
+
+            ctx.fillStyle = 'rgba(2, 6, 23, 0.90)';
+            ctx.fillRect(x0 + 80, y0, 300, zce_h);
+            ctx.fillRect(x0 + 80, y0 + h_chan - zce_h, 300, zce_h);
+
+            ctx.strokeStyle = '#38bdf8'; 
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath(); ctx.moveTo(x0 + 80, y0 + zce_h); ctx.lineTo(x0 + 380, y0 + zce_h); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(x0 + 80, y0 + h_chan - zce_h); ctx.lineTo(x0 + 380, y0 + h_chan - zce_h); ctx.stroke();
+            ctx.setLineDash([]);
+
+            if (zce_h > 12) {
+                ctx.fillStyle = '#f43f5e'; ctx.font = 'bold 10px monospace';
+                for (let ix = x0 + 100; ix < x0 + 370; ix += 35) {
+                    ctx.fillText('ND⁺', ix, y0 + zce_h / 2 + 3);
+                    ctx.fillText('ND⁺', ix, y0 + h_chan - zce_h / 2 + 3);
+                }
+            }
+
+            if (h_ratio < 0.96) {
+                ctx.fillStyle = '#38bdf8';
+                for (let ix = x0 + 25; ix < x0 + w - 25; ix += 35) {
+                    const max_amp = Math.max(0, (h_chan / 2) - zce_h - 10);
+                    const ry = midY + Math.sin(ix * 0.08 + animPhaseT1) * max_amp * 0.7;
+                    ctx.beginPath(); ctx.arc(ix, ry, 3.5, 0, Math.PI * 2); ctx.fill();
+                }
+            }
+
+            ctx.fillStyle = '#ffffff'; ctx.font = 'bold 13px sans-serif';
+            ctx.fillText('S (Fuente)', x0 - 75, midY + 4);
+            ctx.fillText('D (Drenador)', x0 + w + 10, midY + 4);
+            ctx.fillText('GATE TOP (P⁺)', x0 + 175, y0 - 12);
+            ctx.fillText('GATE BOTTOM (P⁺)', x0 + 165, y0 + h_chan + 22);
+
+            const vgsInput = document.getElementById('t1-vgs');
+            const vgsVal = vgsInput ? parseFloat(vgsInput.value).toFixed(2) : "0.00";
+            ctx.strokeStyle = '#06b6d4'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(x0 + 230, y0 - 35); ctx.lineTo(x0 + 230, y0 - 55); ctx.lineTo(x0 - 40, y0 - 55); ctx.lineTo(x0 - 40, midY); ctx.stroke();
+            ctx.fillStyle = '#06b6d4'; ctx.font = 'bold 11px font-mono';
+            ctx.fillText(`VGS = ${vgsVal} V`, x0 + 40, y0 - 58);
+        }
+
+        // ================= MÓDULO 2 =================
+        function updateT2() {
+            const vgsInput = document.getElementById('t2-vgs');
+            const vdsInput = document.getElementById('t2-vds');
+            if (!vgsInput || !vdsInput) return;
+
+            const Vgs = parseFloat(vgsInput.value);
+            const Vds = parseFloat(vdsInput.value);
+
+            const t2VgsVal = document.getElementById('t2-vgs-val');
+            const t2VdsVal = document.getElementById('t2-vds-val');
+            if (t2VgsVal) t2VgsVal.textContent = Vgs.toFixed(2) + " V";
+            if (t2VdsVal) t2VdsVal.textContent = Vds.toFixed(2) + " V";
+
+            const Vp = -4.0;
+            const Vdssat = Math.max(0.0, Vgs - Vp);
+            const Vdg = Vds - Vgs;
+
+            const vdssatOut = document.getElementById('t2-vdssat-out');
+            const vdgOut = document.getElementById('t2-vdg-out');
+            if (vdssatOut) vdssatOut.textContent = Vdssat.toFixed(2) + " V";
+            if (vdgOut) vdgOut.textContent = Vdg.toFixed(2) + " V";
+
+            const Idss = 10.0;
+            let Id = 0.0;
+            let regionStr = "";
+            let regionColor = "";
+
+            const veOut = document.getElementById('t2-ve-out');
+            if (Vds < Vdssat) {
+                Id = Idss * (2 * (1 - Vgs / Vp) * (Vds / -Vp) - Math.pow(Vds / -Vp, 2));
+                regionStr = "REGIÓN ÓHMICA / TRIÓDICA";
+                regionColor = "text-amber-400 font-extrabold text-xs uppercase";
+                if (veOut) veOut.textContent = "Drift Moderada (Función de VDS)";
+            } else {
+                Id = Idss * Math.pow(1 - Vgs / Vp, 2);
+                regionStr = "SATURACIÓN (ESTRANGULADO EN DRAIN)";
+                regionColor = "text-emerald-400 font-extrabold text-xs uppercase";
+                if (veOut) veOut.textContent = "Saturada (vsat en el cuello)";
+            }
+
+            const idOut = document.getElementById('t2-id-out');
+            const regionOut = document.getElementById('t2-region-out');
+            if (idOut) idOut.textContent = Id.toFixed(2) + " mA";
+            if (regionOut) {
+                regionOut.textContent = regionStr;
+                regionOut.className = regionColor;
+            }
+
+            const showEField = document.getElementById('t2-show-efield')?.checked ?? true;
+            drawT2Wedge(Vgs, Vds, Vp, Id, Vdssat, showEField);
+        }
+
+        // Función auxiliar para dibujar flechas vectoriales
+        function drawVectorArrow(ctx, fromX, fromY, toX, toY, color, width = 1.5) {
+            const headlen = 6;
+            const dx = toX - fromX;
+            const dy = toY - fromY;
+            const angle = Math.atan2(dy, dx);
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+            ctx.lineWidth = width;
+            ctx.beginPath();
+            ctx.moveTo(fromX, fromY);
+            ctx.lineTo(toX, toY);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(toX, toY);
+            ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawT2Wedge(Vgs, Vds, Vp, Id, Vdssat, showEField) {
+            const canvas = document.getElementById('t2-canvas-wedge');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const x0 = 80, w = 480, y0 = 70, h_chan = 220;
+            const midY = y0 + h_chan / 2;
+
+            // Canal N
+            ctx.fillStyle = '#082f49'; ctx.fillRect(x0, y0, w, h_chan);
+            ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2; ctx.strokeRect(x0, y0, w, h_chan);
+
+            // Alturas ZCE en Source y Drain
+            const zce_source = (h_chan / 2) * Math.sqrt(Math.min(1.0, Vgs / Vp));
+            const isSaturated = Vds >= Vdssat;
+            const zce_drain = isSaturated ? (h_chan / 2) : (h_chan / 2) * Math.sqrt(Math.min(1.0, (Vds - Vgs) / -Vp));
+
+            let x_pinch = x0 + 400;
+            if (isSaturated) {
+                const overvoltage = Math.min(1.0, (Vds - Vdssat) / 6.0);
+                x_pinch = x0 + 400 - (overvoltage * 45);
+            }
+
+            // Perfil ZCE Superior
+            ctx.fillStyle = 'rgba(2, 6, 23, 0.92)';
+            ctx.beginPath();
+            ctx.moveTo(x0 + 80, y0);
+            ctx.lineTo(x0 + 400, y0);
+            ctx.lineTo(x0 + 400, y0 + (isSaturated ? (h_chan / 2) : zce_drain));
+            if (isSaturated) ctx.lineTo(x_pinch, y0 + (h_chan / 2));
+            ctx.lineTo(x0 + 80, y0 + zce_source);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 1.5; ctx.stroke();
+
+            // Perfil ZCE Inferior
+            ctx.beginPath();
+            ctx.moveTo(x0 + 80, y0 + h_chan);
+            ctx.lineTo(x0 + 400, y0 + h_chan);
+            ctx.lineTo(x0 + 400, y0 + h_chan - (isSaturated ? (h_chan / 2) : zce_drain));
+            if (isSaturated) ctx.lineTo(x_pinch, y0 + h_chan - (h_chan / 2));
+            ctx.lineTo(x0 + 80, y0 + h_chan - zce_source);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Compuertas P+
+            ctx.fillStyle = '#431407';
+            ctx.fillRect(x0 + 80, y0 - 30, 320, 30);
+            ctx.fillRect(x0 + 80, y0 + h_chan, 320, 30);
+            ctx.strokeStyle = '#f97316'; ctx.lineWidth = 1.5;
+            ctx.strokeRect(x0 + 80, y0 - 30, 320, 30);
+            ctx.strokeRect(x0 + 80, y0 + h_chan, 320, 30);
+
+            // ================= VISUALIZACIÓN DE CAMPOS ELÉCTRICOS (FET) =================
+            if (showEField) {
+                // 1. Campo Transversal Ey (De cargas donor ND+ hacia P+)
+                for (let px = x0 + 105; px <= x0 + 380; px += 45) {
+                    const frac = Math.min(1.0, Math.max(0.0, (px - (x0 + 80)) / 320.0));
+                    const local_zce = zce_source + frac * (zce_drain - zce_source);
+
+                    if (local_zce > 12) {
+                        const len = Math.min(local_zce * 0.75, 30);
+                        // Flecha hacia compuerta superior (-Y)
+                        drawVectorArrow(ctx, px, y0 + local_zce - 4, px, y0 + local_zce - 4 - len, '#c084fc', 1.5);
+                        // Flecha hacia compuerta inferior (+Y)
+                        drawVectorArrow(ctx, px, y0 + h_chan - local_zce + 4, px, y0 + h_chan - local_zce + 4 + len, '#c084fc', 1.5);
+                    }
+                }
+
+                // 2. Campo Longitudinal Ex (Apunta de D a S: eje -X)
+                if (Vds > 0.1) {
+                    const ex_len = Math.min(42, 10 + Vds * 4);
+                    // Campo en el canal abierto
+                    drawVectorArrow(ctx, x0 + 260, midY, x0 + 260 - ex_len, midY, '#fbbf24', 2);
+                    drawVectorArrow(ctx, x0 + 160, midY, x0 + 160 - (ex_len * 0.7), midY, '#fbbf24', 1.5);
+
+                    // Campo concentrado en el estrangulamiento
+                    if (isSaturated) {
+                        drawVectorArrow(ctx, x0 + 395, midY, x_pinch - 5, midY, '#f59e0b', 2.8);
+                        ctx.fillStyle = '#f59e0b'; ctx.font = 'bold 9px monospace';
+                        ctx.fillText('Ex MÁX (vsat)', x_pinch - 5, midY + 14);
+                    }
+                }
+
+                // Leyenda de Campos
+                ctx.fillStyle = '#c084fc'; ctx.font = 'bold 10px monospace';
+                ctx.fillText('↑ Ey Transversal (Efecto de Campo)', x0 + 85, y0 + 18);
+                ctx.fillStyle = '#fbbf24';
+                ctx.fillText('← Ex Longitudinal (Arrastre)', x0 + 85, y0 + 32);
+            }
+
+            // Flujo de electrones animados
+            ctx.fillStyle = '#38bdf8';
+            for (let i = 0; i < 28; i++) {
+                const progress = ((i * 18 + animPhaseT2 * 22) % w);
+                const px = x0 + progress;
+                
+                let local_zce = zce_source;
+                if (px >= x0 + 80 && px <= x_pinch) {
+                    const frac = (px - (x0 + 80)) / (x_pinch - (x0 + 80));
+                    local_zce = zce_source + frac * ((h_chan / 2) - zce_source);
+                } else if (px > x_pinch) {
+                    local_zce = h_chan / 2 - 2;
+                }
+                
+                const allowed_h = Math.max(2, (h_chan / 2) - local_zce - 3);
+                const py = midY + (Math.sin(i * 1.5 + animPhaseT2) * allowed_h * 0.75);
+
+                ctx.beginPath(); ctx.arc(px, py, 3, 0, Math.PI * 2); ctx.fill();
+            }
+
+            // Etiquetas
+            ctx.fillStyle = '#ffffff'; ctx.font = 'bold 12px sans-serif';
+            ctx.fillText('S (Fuente) [0V]', x0 - 80, midY - 10);
+            ctx.fillText('D (Drenador)', x0 + w + 10, midY - 10);
+            ctx.fillText(`[+${Vds.toFixed(1)}V]`, x0 + w + 10, midY + 8);
+
+            ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 11px monospace';
+            ctx.fillText('Flujo de Electrones e⁻ (S -> D)', x0 + 130, midY - 38);
+            ctx.fillStyle = '#10b981';
+            ctx.fillText(`Corriente Convencional ID = ${Id.toFixed(2)} mA (D -> S)`, x0 + 110, midY + 40);
+
+            if (isSaturated) {
+                ctx.fillStyle = '#fbbf24'; ctx.font = 'bold 10px monospace';
+                ctx.fillText('PINCH-OFF POINT', x_pinch - 45, midY - (h_chan/2) - 8);
+            }
+        }
+
+        // ================= MÓDULO 3 =================
+        function updateT3() {
+            const vgsInput = document.getElementById('t3-vgs');
+            const vdsInput = document.getElementById('t3-vds');
+            if (!vgsInput || !vdsInput) return;
+
+            const Vgs = parseFloat(vgsInput.value);
+            const Vds = parseFloat(vdsInput.value);
+
+            const t3VgsVal = document.getElementById('t3-vgs-val');
+            const t3VdsVal = document.getElementById('t3-vds-val');
+            if (t3VgsVal) t3VgsVal.textContent = Vgs.toFixed(2) + " V";
+            if (t3VdsVal) t3VdsVal.textContent = Vds.toFixed(2) + " V";
+
+            const Vp = -4.0, Idss = 10.0;
+            const Vdssat = Math.max(0.0, Vgs - Vp);
+
+            let Id = 0.0;
+            let zoneStr = "SATURACIÓN";
+            if (Vgs <= Vp) {
+                Id = 0.0; zoneStr = "CORTE (OFF)";
+            } else if (Vds < Vdssat) {
+                Id = Idss * (2 * (1 - Vgs / Vp) * (Vds / -Vp) - Math.pow(Vds / -Vp, 2));
+                zoneStr = "ÓHMICA / TRIÓDICA";
+            } else {
+                Id = Idss * Math.pow(1 - Vgs / Vp, 2);
+                zoneStr = "SATURACIÓN";
+            }
+
+            const idqOut = document.getElementById('t3-idq-out');
+            const zoneOut = document.getElementById('t3-zone-out');
+            if (idqOut) idqOut.textContent = Id.toFixed(2) + " mA";
+            if (zoneOut) zoneOut.textContent = zoneStr;
+
+            drawT3Output(Vgs, Vds, Id);
+            drawT3Transfer(Vgs, Id);
+        }
+
+        function drawT3Output(Vgs_sel, Vds_sel, Id_sel) {
+            const canvas = document.getElementById('t3-canvas-output');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const ox = 40, oy = 260, sw = 230, sh = 220;
+            ctx.strokeStyle = '#475569'; ctx.lineWidth = 1; ctx.beginPath();
+            ctx.moveTo(ox, 20); ctx.lineTo(ox, oy); ctx.lineTo(ox + sw, oy); ctx.stroke();
+
+            const Vp = -4.0, Idss = 10.0;
+
+            for (let vgs = 0; vgs >= -4.0; vgs -= 1.0) {
+                ctx.strokeStyle = Math.abs(vgs - Vgs_sel) < 0.2 ? '#38bdf8' : '#334155';
+                ctx.lineWidth = Math.abs(vgs - Vgs_sel) < 0.2 ? 2.5 : 1;
+                ctx.beginPath();
+                const vdssat = vgs - Vp;
+
+                for (let vds = 0; vds <= 15; vds += 0.2) {
+                    let id = 0;
+                    if (vds < vdssat) id = Idss * (2 * (1 - vgs / Vp) * (vds / -Vp) - Math.pow(vds / -Vp, 2));
+                    else id = Idss * Math.pow(1 - vgs / Vp, 2);
+
+                    const px = ox + (vds / 15.0) * sw;
+                    const py = oy - (id / 10.0) * sh;
+                    if (vds === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+                }
+                ctx.stroke();
+            }
+
+            const qx = ox + (Vds_sel / 15.0) * sw;
+            const qy = oy - (Id_sel / 10.0) * sh;
+            ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(qx, qy, 5, 0, Math.PI * 2); ctx.fill();
+        }
+
+        function drawT3Transfer(Vgs_sel, Id_sel) {
+            const canvas = document.getElementById('t3-canvas-transfer');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const ox = 240, oy = 260, sw = 200, sh = 220;
+            ctx.strokeStyle = '#475569'; ctx.lineWidth = 1; ctx.beginPath();
+            ctx.moveTo(ox, 20); ctx.lineTo(ox, oy);
+            ctx.moveTo(ox - sw, oy); ctx.lineTo(ox, oy); ctx.stroke();
+
+            const Vp = -4.0, Idss = 10.0;
+            ctx.strokeStyle = '#10b981'; ctx.lineWidth = 2.5; ctx.beginPath();
+
+            for (let vgs = -4.0; vgs <= 0; vgs += 0.1) {
+                const id = Idss * Math.pow(1 - vgs / Vp, 2);
+                const px = ox + (vgs / 4.0) * sw;
+                const py = oy - (id / 10.0) * sh;
+                if (vgs === -4.0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+
+            const qx = ox + (Vgs_sel / 4.0) * sw;
+            const qy = oy - (Id_sel / 10.0) * sh;
+            ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(qx, qy, 5, 0, Math.PI * 2); ctx.fill();
+        }
+
+        // ================= MÓDULO 4: AMPLIFICADOR, OSCILOSCOPIO Y gm =================
+        function updateT4() {
+            const vgsInput = document.getElementById('t4-vgs');
+            const rdInput = document.getElementById('t4-rd');
+            const vinInput = document.getElementById('t4-vin');
+            if (!vgsInput || !rdInput || !vinInput) return;
+
+            const Vgs = parseFloat(vgsInput.value);
+            const Rd_k = parseFloat(rdInput.value);
+            const Vin_pkpk = parseFloat(vinInput.value);
+
+            const t4VgsVal = document.getElementById('t4-vgs-val');
+            const t4RdVal = document.getElementById('t4-rd-val');
+            const t4VinVal = document.getElementById('t4-vin-val');
+            if (t4VgsVal) t4VgsVal.textContent = Vgs.toFixed(2) + " V";
+            if (t4RdVal) t4RdVal.textContent = Rd_k.toFixed(1) + " kΩ";
+            if (t4VinVal) t4VinVal.textContent = Vin_pkpk.toFixed(0) + " mV";
+
+            const Vp = -4.0, gm0 = 5.0;
+            const gm = Math.max(0.0, gm0 * (1 - Vgs / Vp));
+            const gd = Math.max(0.0, gm0 * (1 - Vgs / Vp));
+            const rds = gd > 0.01 ? (1000.0 / gd) : 99999;
+
+            const Rd_ohms = Rd_k * 1000.0;
+            const Av = gm * (Rd_ohms / 1000.0);
+            const Av_dB = Av > 0.01 ? 20 * Math.log10(Av) : 0;
+            const Vout_pkpk = Vin_pkpk * Av;
+
+            const gmOut = document.getElementById('t4-gm-out');
+            const avOut = document.getElementById('t4-av-out');
+            const voutOut = document.getElementById('t4-vout-out');
+            const gdOut = document.getElementById('t4-gd-out');
+            const rdsOut = document.getElementById('t4-rds-out');
+            const scopeTag = document.getElementById('t4-scope-tag');
+
+            if (gmOut) gmOut.textContent = gm.toFixed(2) + " mS";
+            if (avOut) avOut.textContent = `${Av.toFixed(2)}x (${Av_dB.toFixed(1)} dB)`;
+            if (voutOut) voutOut.textContent = `${Vout_pkpk.toFixed(0)} mV (${(Vout_pkpk/1000).toFixed(2)} V)`;
+            if (gdOut) gdOut.textContent = gd.toFixed(2) + " mS";
+            if (rdsOut) rdsOut.textContent = rds < 50000 ? rds.toFixed(0) + " Ω" : "∞ (Corte)";
+            if (scopeTag) scopeTag.textContent = `Av = -${Av.toFixed(1)}x`;
+
+            drawT4Oscilloscope(gm, Rd_ohms, Vin_pkpk);
+            drawT4Curves(Vgs);
+        }
+
+        function drawT4Oscilloscope(gm, Rd, Vin_pk) {
+            const canvas = document.getElementById('t4-canvas-scope');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const Av = gm * (Rd / 1000.0);
+            const Vout_pk = Vin_pk * Av;
+
+            const ox = 20, oy = 150, w = 260, h = 120;
+
+            // Retícula tipo osciloscopio
+            ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1; ctx.beginPath();
+            for (let x = ox; x <= ox + w; x += 26) { ctx.moveTo(x, oy - h); ctx.lineTo(x, oy + h); }
+            for (let y = oy - h; y <= oy + h; y += 24) { ctx.moveTo(ox, y); ctx.lineTo(ox + w, y); }
+            ctx.stroke();
+
+            // Eje central
+            ctx.strokeStyle = '#475569';
+            ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ox + w, oy); ctx.stroke();
+
+            // 1. Señal de Entrada vin (CH1 - Celeste)
+            ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2; ctx.beginPath();
+            for (let x = 0; x <= w; x++) {
+                const t = (x / w) * 4 * Math.PI + animPhaseScope;
+                const y = oy - Math.sin(t) * (Vin_pk * 0.15);
+                if (x === 0) ctx.moveTo(ox + x, y); else ctx.lineTo(ox + x, y);
+            }
+            ctx.stroke();
+
+            // 2. Señal de Salida vout amplificada e invertida 180° (CH2 - Esmeralda)
+            ctx.strokeStyle = '#10b981'; ctx.lineWidth = 2.5; ctx.beginPath();
+            for (let x = 0; x <= w; x++) {
+                const t = (x / w) * 4 * Math.PI + animPhaseScope;
+                const y = oy - (-Math.sin(t)) * Math.min(h - 5, (Vout_pk * 0.15)); 
+                if (x === 0) ctx.moveTo(ox + x, y); else ctx.lineTo(ox + x, y);
+            }
+            ctx.stroke();
+
+            ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 10px monospace';
+            ctx.fillText(`CH1 (vin): ${Vin_pk.toFixed(0)} mVpp`, ox + 5, oy - h + 15);
+            ctx.fillStyle = '#10b981';
+            ctx.fillText(`CH2 (vout): ${Vout_pk.toFixed(0)} mVpp (x${Av.toFixed(1)}) [180°]`, ox + 5, oy - h + 30);
+        }
+
+        function drawT4Curves(Vgs_sel) {
+            const canvas = document.getElementById('t4-canvas-gm');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const ox = 240, oy = 260, sw = 200, sh = 220;
+            ctx.strokeStyle = '#475569'; ctx.lineWidth = 1; ctx.beginPath();
+            ctx.moveTo(ox, 20); ctx.lineTo(ox, oy);
+            ctx.moveTo(ox - sw, oy); ctx.lineTo(ox, oy); ctx.stroke();
+
+            ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2.5; ctx.beginPath();
+            ctx.moveTo(ox - sw, oy); ctx.lineTo(ox, oy - sh); ctx.stroke();
+
+            ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2; ctx.beginPath();
+            for (let vgs = -3.7; vgs <= 0; vgs += 0.1) {
+                const gd = 5.0 * (1 - vgs / -4.0);
+                const rds = 1000.0 / gd;
+                const px = ox + (vgs / 4.0) * sw;
+                const py = oy - Math.min(1.0, rds / 3000.0) * sh;
+                if (vgs === -3.7) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+
+            const qx = ox + (Vgs_sel / 4.0) * sw;
+            const qy = oy - (1 - Vgs_sel / -4.0) * sh;
+            ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(qx, qy, 5, 0, Math.PI * 2); ctx.fill();
+
+            ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 10px sans-serif';
+            ctx.fillText('gm (Saturación)', ox - sw + 10, 40);
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillText('rds (Región Óhmica)', ox - sw + 10, 56);
+            ctx.fillStyle = '#94a3b8';
+            ctx.fillText('Eje X: VGS (0 a -4V)', ox - 110, oy + 16);
+        }
+
+        // ================= MÓDULO 5 =================
+        function updateT5() {
+            const vgsInput = document.getElementById('t5-vgs');
+            const tempInput = document.getElementById('t5-temp');
+            if (!vgsInput || !tempInput) return;
+
+            const Vgs = parseFloat(vgsInput.value);
+            const Temp = parseFloat(tempInput.value);
+
+            const t5VgsVal = document.getElementById('t5-vgs-val');
+            const t5TempVal = document.getElementById('t5-temp-val');
+            if (t5VgsVal) t5VgsVal.textContent = Vgs.toFixed(2) + " V";
+            if (t5TempVal) t5TempVal.textContent = `${Temp} K (${(Temp - 273.15).toFixed(0)}°C)`;
+
+            const igss_base = 10.0;
+            const igss = igss_base * Math.exp((Temp - 300) * 0.07) * (1.0 + Math.abs(Vgs) * 0.1);
+
+            const igssOut = document.getElementById('t5-igss-out');
+            if (igssOut) igssOut.textContent = `${igss.toFixed(1)} pA (${(igss / 1000.0).toFixed(5)} nA)`;
+
+            const rin = (Math.abs(Vgs) > 0.1 ? Math.abs(Vgs) : 0.1) / (igss * 1e-12);
+            const rin_giga = rin / 1e9;
+
+            const rinOut = document.getElementById('t5-rin-out');
+            if (rinOut) rinOut.textContent = `${rin_giga.toFixed(1)} GΩ (${(rin / 1e6).toFixed(0)} MΩ)`;
+
+            drawT5Impedance(Vgs, igss, rin_giga);
+        }
+
+        function drawT5Impedance(Vgs, igss, rin_giga) {
+            const canvas = document.getElementById('t5-canvas-impedance');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2;
+            ctx.strokeRect(50, 40, 200, 260);
+
+            ctx.fillStyle = '#0f172a'; ctx.fillRect(80, 80, 140, 80);
+            ctx.strokeStyle = '#f43f5e'; ctx.lineWidth = 2; ctx.strokeRect(80, 80, 140, 80);
+
+            ctx.fillStyle = '#ffffff'; ctx.font = 'bold 11px sans-serif';
+            ctx.fillText('PICO-AMPERÍMETRO', 90, 100);
+            ctx.fillStyle = '#f43f5e'; ctx.font = 'bold 16px monospace';
+            ctx.fillText(`IG = ${igss.toFixed(1)} pA`, 90, 130);
+
+            ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 11px sans-serif';
+            ctx.fillText(`Fuente VGS = ${Vgs.toFixed(1)}V`, 70, 220);
+            ctx.fillText('Juntura P+N Inversa (Gate)', 60, 260);
+
+            const bx = 320, by = 260, bw = 180;
+            ctx.strokeStyle = '#475569'; ctx.lineWidth = 1; ctx.beginPath();
+            ctx.moveTo(bx, 40); ctx.lineTo(bx, by); ctx.lineTo(bx + bw, by); ctx.stroke();
+
+            const h_jfet = Math.min(200, (rin_giga / 600.0) * 180 + 20);
+            ctx.fillStyle = '#10b981'; ctx.fillRect(bx + 20, by - h_jfet, 50, h_jfet);
+            ctx.fillStyle = '#ffffff'; ctx.font = 'bold 10px sans-serif';
+            ctx.fillText(`${rin_giga.toFixed(0)} GΩ`, bx + 20, by - h_jfet - 8);
+            ctx.fillText('JFET', bx + 30, by + 15);
+
+            const h_bjt = 3;
+            ctx.fillStyle = '#ef4444'; ctx.fillRect(bx + 100, by - h_bjt, 50, h_bjt);
+            ctx.fillText('10 kΩ', bx + 105, by - h_bjt - 8);
+            ctx.fillText('BJT', bx + 115, by + 15);
+
+            ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 11px sans-serif';
+            ctx.fillText('Impedancia de Entrada Rin', bx + 20, 30);
+        }
+
+        // Bucle de animación global
+        function animationLoop() {
+            if (activeTab === 'tab1') {
+                animPhaseT1 += 0.08;
+                updateT1();
+            } else if (activeTab === 'tab2') {
+                const vgsInput = document.getElementById('t2-vgs');
+                const vdsInput = document.getElementById('t2-vds');
+                const Vgs = vgsInput ? parseFloat(vgsInput.value) : -1.0;
+                const Vds = vdsInput ? parseFloat(vdsInput.value) : 2.0;
+                const Vdssat = Math.max(0.0, Vgs - (-4.0));
+                let currId = 1.0;
+                if (Vds < Vdssat) {
+                    currId = 10.0 * (2 * (1 - Vgs / -4.0) * (Vds / 4.0) - Math.pow(Vds / 4.0, 2));
+                } else {
+                    currId = 10.0 * Math.pow(1 - Vgs / -4.0, 2);
+                }
+                animPhaseT2 += (0.04 + Math.max(0.1, currId) * 0.015);
+                updateT2();
+            } else if (activeTab === 'tab4') {
+                animPhaseScope += 0.12;
+                updateT4();
+            }
+            requestAnimationFrame(animationLoop);
+        }
+
+        function attachListener(id, evt, fn) {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener(evt, fn);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            attachListener('t1-vgs', 'input', updateT1);
+            attachListener('t2-vgs', 'input', updateT2);
+            attachListener('t2-vds', 'input', updateT2);
+            attachListener('t2-show-efield', 'change', updateT2);
+            attachListener('t3-vgs', 'input', updateT3);
+            attachListener('t3-vds', 'input', updateT3);
+            attachListener('t4-vgs', 'input', updateT4);
+            attachListener('t4-rd', 'input', updateT4);
+            attachListener('t4-vin', 'input', updateT4);
+            attachListener('t5-vgs', 'input', updateT5);
+            attachListener('t5-temp', 'input', updateT5);
+
+            switchTab('tab1');
+            requestAnimationFrame(animationLoop);
+        });
+    </script>
+<footer class="sim-footer">
+    <p><strong>Física de los Semiconductores</strong> </p>
+    <p> José Luis Bossa </p>
+    <p> Facultad de Ingeniería y Ciencias Agropecuarias (FICA) - Universidad Nacional de San Luis </p>
+</footer>
+</body>
+</html>
