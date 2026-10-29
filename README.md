@@ -20,7 +20,7 @@ Este portal reúne una suite de **simuladores web interactivos** diseñados para
 
 Podés acceder al portal interactivo desplegado en tiempo real a través del siguiente enlace:
 
-👉 **[Portal del Laboratorio Virtual de Física de los Semiconductores](https://jlbossa-git.github.io/simuladores-fisica-semiconductores/)
+👉 ** [Portal del Laboratorio Virtual de Física de los Semiconductores](https://jlbossa-git.github.io/simuladores-fisica-semiconductores/) **
 
 ---
 
