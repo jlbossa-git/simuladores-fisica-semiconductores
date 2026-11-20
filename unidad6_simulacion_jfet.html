@@ -528,6 +528,7 @@
             ctx.fillStyle = '#c084fc'; ctx.font = 'bold 11px monospace';
             ctx.fillText(`Vbi = 0.70 V (ZCE inicial)`, x0 + 250, y0 - 58);
             const zce_h = (h_chan / 2) * h_ratio;
+            const zce_vbi = (h_chan / 2) * Math.sqrt(0.7 / 4.7); // Fracción fija por Vbi (0.7V)
 
             ctx.fillStyle = '#431407';
             ctx.fillRect(x0 + 80, y0 - 35, 300, 35);
@@ -537,10 +538,24 @@
             ctx.strokeRect(x0 + 80, y0 - 35, 300, 35);
             ctx.strokeRect(x0 + 80, y0 + h_chan, 300, 35);
 
+            // 1. ZCE total (la parte que excede a Vbi queda oscura)
             ctx.fillStyle = 'rgba(2, 6, 23, 0.90)';
             ctx.fillRect(x0 + 80, y0, 300, zce_h);
             ctx.fillRect(x0 + 80, y0 + h_chan - zce_h, 300, zce_h);
 
+            // 2. ZCE inicial debida a Vbi (en violeta translúcido)
+            ctx.fillStyle = 'rgba(168, 85, 247, 0.28)';
+            ctx.fillRect(x0 + 80, y0, 300, zce_vbi);
+            ctx.fillRect(x0 + 80, y0 + h_chan - zce_vbi, 300, zce_vbi);
+
+            // Línea divisoria de Vbi (violeta punteada)
+            ctx.strokeStyle = '#c084fc';
+            ctx.lineWidth = 1.2;
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath(); ctx.moveTo(x0 + 80, y0 + zce_vbi); ctx.lineTo(x0 + 380, y0 + zce_vbi); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(x0 + 80, y0 + h_chan - zce_vbi); ctx.lineTo(x0 + 380, y0 + h_chan - zce_vbi); ctx.stroke();
+
+            // Borde de la ZCE total por VGS (celeste punteada)
             ctx.strokeStyle = '#38bdf8';
             ctx.lineWidth = 1.5;
             ctx.setLineDash([4, 4]);
