@@ -1,67 +1,81 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <!-- Renderizador de LaTeX (MathJax) -->
-<script>
-  MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
-</script>
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <script>
+        MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transistor JFET</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #0b0f1a; color: #f8fafc; }
-        .tab-btn.active { background-color: #1e293b; border-color: #38bdf8; color: #38bdf8; }
-        input[type=range] { accent-color: #38bdf8; }
+        body {
+            background-color: #0b0f1a;
+            color: #f8fafc;
+        }
+
+        .tab-btn.active {
+            background-color: #1e293b;
+            border-color: #38bdf8;
+            color: #38bdf8;
+        }
+
+        input[type=range] {
+            accent-color: #38bdf8;
+        }
     </style>
     <link rel="stylesheet" href="assets/css/tema.css">
 </head>
+
 <body class="p-4 md:p-6 font-sans">
     <!-- Botón Flotante para Volver al Portal (Misma Carpeta) -->
-<a href="index.html" class="btn-volver-portal">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
-    </svg>
-    Volver al Portal
-</a>
+    <a href="index.html" class="btn-volver-portal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+                d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
+        </svg>
+        Volver al Portal
+    </a>
 
-<style>
-    .btn-volver-portal {
-        position: fixed;
-        top: 15px;
-        left: 15px;
-        z-index: 9999;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 14px;
-        background-color: #1e293b;
-        color: #38bdf8;
-        border: 1px solid #334155;
-        border-radius: 8px;
-        text-decoration: none;
-        font-family: system-ui, -apple-system, sans-serif;
-        font-size: 0.85rem;
-        font-weight: 600;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        transition: all 0.2s ease;
-    }
+    <style>
+        .btn-volver-portal {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 9999;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background-color: #1e293b;
+            color: #38bdf8;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            text-decoration: none;
+            font-family: system-ui, -apple-system, sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+        }
 
-    .btn-volver-portal:hover {
-        background-color: #334155;
-        border-color: #38bdf8;
-        color: #ffffff;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(56, 189, 248, 0.25);
-    }
-</style>
+        .btn-volver-portal:hover {
+            background-color: #334155;
+            border-color: #38bdf8;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(56, 189, 248, 0.25);
+        }
+    </style>
 
-            <div class="max-w-6xl mx-auto">
+    <div class="max-w-6xl mx-auto">
         <!-- Encabezado -->
         <header class="mb-6 border-b border-slate-700 pb-4 text-center md:text-left">
-              <p class="subtitle">Física de los Semiconductores - FICA (UNSL)</p>
+            <p class="subtitle">Física de los Semiconductores - FICA (UNSL)</p>
 
             <h1 class="text-3xl font-extrabold text-sky-400">Transistor JFET</h1>
             <p class="text-slate-400 mt-1">Simulador Interactivo: Operación, Polarización y Características</p>
@@ -71,101 +85,153 @@
 
         <!-- Navegación por Pestañas -->
         <div class="flex flex-wrap gap-2 mb-6 border-b border-slate-800 pb-4">
-            <button onclick="switchTab('tab1')" id="btn-tab1" class="tab-btn active px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900 text-xs md:text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
+            <button onclick="switchTab('tab1')" id="btn-tab1"
+                class="tab-btn active px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900 text-xs md:text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
                 <span>📐</span> 1. Pinch-off por $V_{GS} (V_{DS}=0)$
             </button>
-            <button onclick="switchTab('tab2')" id="btn-tab2" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900 text-xs md:text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
+            <button onclick="switchTab('tab2')" id="btn-tab2"
+                class="tab-btn px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900 text-xs md:text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
                 <span>🌊</span> 2. Flujo de Cargas, Estrangulamiento y Campo Eléctrico
             </button>
-            <button onclick="switchTab('tab3')" id="btn-tab3" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900 text-xs md:text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
+            <button onclick="switchTab('tab3')" id="btn-tab3"
+                class="tab-btn px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900 text-xs md:text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
                 <span>📈</span> 3. Curvas $I_D-V_{DS}$ y Transferencia
             </button>
-            <button onclick="switchTab('tab4')" id="btn-tab4" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900 text-xs md:text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
+            <button onclick="switchTab('tab4')" id="btn-tab4"
+                class="tab-btn px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900 text-xs md:text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
                 <span>⚡</span> 4. Conductancia, $g_m$ y Amplificador
             </button>
-            <button onclick="switchTab('tab5')" id="btn-tab5" class="tab-btn px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900 text-xs md:text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
+            <button onclick="switchTab('tab5')" id="btn-tab5"
+                class="tab-btn px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900 text-xs md:text-sm font-bold text-slate-400 hover:text-white transition flex items-center gap-2">
                 <span>🛡️</span> 5. Simulador de Alta Impedancia de Entrada
             </button>
         </div>
 
         <!-- ================= MÓDULO 1: PINCH-OFF POR VGS ================= -->
         <section id="content-tab1" class="tab-content grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div class="lg:col-span-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+            <div
+                class="lg:col-span-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
                 <div>
-                    <h3 class="text-lg font-bold text-sky-400 mb-4">⚙️ Tensión de Compuerta $V_{GS}$ con $(V_{DS} = 0V)$</h3>
+                    <h3 class="text-lg font-bold text-sky-400 mb-4">⚙️ Tensión de Compuerta $V_{GS}$ con $(V_{DS} = 0V)$
+                    </h3>
                     <div class="mb-4">
                         <div class="flex justify-between mb-1">
-                            <label class="text-xs font-semibold text-slate-300">Tensión Compuerta-Fuente ($V_{GS}$):</label>
+                            <label class="text-xs font-semibold text-slate-300">Tensión Compuerta-Fuente
+                                ($V_{GS}$):</label>
                             <span class="text-sm font-mono text-cyan-400 font-bold" id="t1-vgs-val">0.00 V</span>
                         </div>
-                        <input type="range" id="t1-vgs" min="-4.0" max="0.0" step="0.05" value="0.00" class="w-full accent-cyan-500">
+                        <input type="range" id="t1-vgs" min="-4.0" max="0.0" step="0.05" value="0.00"
+                            class="w-full accent-cyan-500">
                     </div>
-                    
+
                     <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono space-y-2.5 mt-4">
-                        <div class="flex justify-between"><span class="text-slate-500">Tensión de Estrangulamiento $(V_P)$:</span><span class="text-amber-400 font-bold">-4.00 V</span></div>
-                        <div class="flex justify-between"><span class="text-slate-500">Ancho Semicanal Efectivo (a - h):</span><span class="text-emerald-400 font-bold" id="t1-ch-width">1.00 μm (Abierto)</span></div>
-                        <div class="flex justify-between"><span class="text-slate-500">Cargas Fijas en ZCE:</span><span class="text-rose-400 font-bold">Iones N_D⁺ e Iones N_A⁻</span></div>
-                        <div class="flex justify-between border-t border-slate-900 pt-1.5"><span class="text-slate-300 font-bold">Estado del Canal N:</span><span class="text-sky-400 font-extrabold uppercase text-xs" id="t1-canal-state">CONDUCTOR (ABIERTO)</span></div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Potencial Interno ($V_{bi}$):</span>
+                            <span class="text-purple-400 font-bold">0.70 V</span>
+                        </div>
+
+                        <div class="flex justify-between"><span class="text-slate-500">Tensión de Estrangulamiento
+                                $(V_P)$:</span><span class="text-amber-400 font-bold">-4.00 V</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Ancho Semicanal Efectivo (a -
+                                h):</span><span class="text-emerald-400 font-bold" id="t1-ch-width">1.00 μm
+                                (Abierto)</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Cargas Fijas en ZCE:</span><span
+                                class="text-rose-400 font-bold">Iones $N_D^+$ e Iones $N_A^-$</span></div>
+                        <div class="flex justify-between border-t border-slate-900 pt-1.5"><span
+                                class="text-slate-300 font-bold">Estado del Canal N:</span><span
+                                class="text-sky-400 font-extrabold uppercase text-xs" id="t1-canal-state">CONDUCTOR
+                                (ABIERTO)</span></div>
                     </div>
                 </div>
                 <p class="text-[11px] text-slate-500 italic mt-4">
-                    <strong>Formación de la ZCE y Expulsión de Cargas:</strong> Al aplicar $V_{GS} < 0$, la juntura $P^+N$ en polarización inversa ensancha la Zona de Carga Espacial (ZCE), expulsando a los electrones libres ($e^-$). Quedan descubiertos los iones donores fijos ($N_D^+$ en el canal) y aceptores ($N_A^-$ en el gate). Al alcanzar $V_{GS} = V_P = -4\text{ V}$, ambas ZCE se tocan en el centro vaciando el canal de portadores móviles (*modelo ideal con $V_{bi} \ll |V_P|$*).
-                </p>
+                    <strong>Formación de la ZCE y Expulsión de Cargas:</strong> Al aplicar $V_{GS} < 0$, la juntura
+                        $P^+N$ en polarización inversa ensancha la Zona de Carga Espacial (ZCE), expulsando a los
+                        electrones libres ($e^-$). Quedan descubiertos los iones donores fijos ($N_D^+$ en el canal) y
+                        aceptores ($N_A^-$ en el gate). Al alcanzar $V_{GS}=V_P=-4\text{ V}$, ambas ZCE se tocan en el
+                        centro vaciando el canal de portadores móviles (*modelo ideal con $V_{bi} \ll |V_P|$*). </p>
             </div>
-            
+
             <div class="lg:col-span-8 bg-slate-900/60 p-6 rounded-2xl border border-slate-800">
-                <h4 class="font-bold text-white mb-2 text-sm">Corte Transversal con Etiquetas Completas (D, S, G, $V_{GS}$, ZCE e Iones Fijos)</h4>
-                <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center" style="height: 400px;">
-                    <canvas id="t1-canvas-channel" width="650" height="380" class="w-full h-full max-w-[650px]"></canvas>
+                <h4 class="font-bold text-white mb-2 text-sm">Corte Transversal con Etiquetas Completas (D, S, G,
+                    $V_{GS}$, ZCE e Iones Fijos)</h4>
+                <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center"
+                    style="height: 400px;">
+                    <canvas id="t1-canvas-channel" width="650" height="380"
+                        class="w-full h-full max-w-[650px]"></canvas>
                 </div>
             </div>
         </section>
 
         <!-- ================= MÓDULO 2: ESTRANGULAMIENTO Y CAMPO ELÉCTRICO ================= -->
         <section id="content-tab2" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div class="lg:col-span-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+            <div
+                class="lg:col-span-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
                 <div>
                     <h3 class="text-lg font-bold text-amber-400 mb-4">⚙️ Fuentes Externas $V_{GS}$ y $V_{DS}$</h3>
-                    
+
                     <div class="mb-4">
-                        <div class="flex justify-between mb-1"><label class="text-xs font-semibold text-slate-300">Fuente Compuerta ($V_{GS}$):</label><span class="text-sm font-mono text-cyan-400 font-bold" id="t2-vgs-val">-1.00 V</span></div>
-                        <input type="range" id="t2-vgs" min="-3.5" max="0.0" step="0.5" value="-1.00" class="w-full accent-cyan-500">
+                        <div class="flex justify-between mb-1"><label
+                                class="text-xs font-semibold text-slate-300">Fuente Compuerta ($V_{GS}$):</label><span
+                                class="text-sm font-mono text-cyan-400 font-bold" id="t2-vgs-val">-1.00 V</span></div>
+                        <input type="range" id="t2-vgs" min="-4.0" max="0.0" step="0.5" value="-1.00"
+                            class="w-full accent-cyan-500">
                     </div>
 
                     <div class="mb-4">
-                        <div class="flex justify-between mb-1"><label class="text-xs font-semibold text-slate-300">Fuente Drenador (VDS):</label><span class="text-sm font-mono text-amber-400 font-bold" id="t2-vds-val">2.00 V</span></div>
-                        <input type="range" id="t2-vds" min="0.0" max="8.0" step="0.1" value="2.00" class="w-full accent-amber-500">
+                        <div class="flex justify-between mb-1"><label
+                                class="text-xs font-semibold text-slate-300">Fuente Drenador (VDS):</label><span
+                                class="text-sm font-mono text-amber-400 font-bold" id="t2-vds-val">2.00 V</span></div>
+                        <input type="range" id="t2-vds" min="0.0" max="8.0" step="0.1" value="2.00"
+                            class="w-full accent-amber-500">
                     </div>
 
                     <!-- Interruptor para Visualizar el Campo Eléctrico -->
-                    <div class="mb-4 bg-slate-950/80 p-3 rounded-xl border border-sky-900/50 flex items-center justify-between">
+                    <div
+                        class="mb-4 bg-slate-950/80 p-3 rounded-xl border border-sky-900/50 flex items-center justify-between">
                         <span class="text-xs font-bold text-sky-300 flex items-center gap-1.5">
                             <span>⚡</span> Ver Vectores de Campo Eléctrico (E)
                         </span>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="t2-show-efield" class="sr-only peer" checked>
-                            <div class="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-sky-500"></div>
+                            <div
+                                class="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-sky-500">
+                            </div>
                         </label>
                     </div>
 
                     <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono space-y-2.5">
-                        <div class="flex justify-between"><span class="text-slate-500">VDS de Saturación VDS(sat):</span><span class="text-amber-400 font-bold" id="t2-vdssat-out">3.00 V</span></div>
-                        <div class="flex justify-between"><span class="text-slate-500">Tensión Inversa en Drain VDG:</span><span class="text-rose-400 font-bold" id="t2-vdg-out">3.00 V</span></div>
-                        <div class="flex justify-between"><span class="text-slate-500">Velocidad de Electrones (ve):</span><span class="text-sky-400 font-bold" id="t2-ve-out">Media (Drift)</span></div>
-                        <div class="flex justify-between border-t border-slate-900 pt-1.5"><span class="text-slate-300 font-bold">Región del JFET:</span><span class="text-emerald-400 font-extrabold text-xs uppercase" id="t2-region-out">REGIÓN ÓHMICA</span></div>
-                        <div class="flex justify-between"><span class="text-slate-300 font-bold">Corriente de Drenador ID:</span><span class="text-emerald-400 font-extrabold text-sm" id="t2-id-out">4.10 mA</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">VDS de Saturación
+                                VDS(sat):</span><span class="text-amber-400 font-bold" id="t2-vdssat-out">3.00 V</span>
+                        </div>
+                        <div class="flex justify-between"><span class="text-slate-500">Tensión Inversa en Drain
+                                VDG:</span><span class="text-rose-400 font-bold" id="t2-vdg-out">3.00 V</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Velocidad de Electrones
+                                (ve):</span><span class="text-sky-400 font-bold" id="t2-ve-out">Media (Drift)</span>
+                        </div>
+                        <div class="flex justify-between border-t border-slate-900 pt-1.5"><span
+                                class="text-slate-300 font-bold">Región del JFET:</span><span
+                                class="text-emerald-400 font-extrabold text-xs uppercase" id="t2-region-out">REGIÓN
+                                ÓHMICA</span></div>
+                        <div class="flex justify-between"><span class="text-slate-300 font-bold">Corriente de Drenador
+                                ID:</span><span class="text-emerald-400 font-extrabold text-sm" id="t2-id-out">4.10
+                                mA</span></div>
                     </div>
                 </div>
                 <p class="text-[11px] text-slate-500 italic mt-4">
                     <strong>El Origen del "Efecto de Campo" (FET):</strong><br>
-                    • <strong class="text-purple-400">Campo Transversal $\vec{E}_y$ (Compuerta):</strong> Apunta desde los iones positivos del canal ($N_D^+$) hacia las compuertas negativas ($P^+$). Controla electrostáticamente la apertura del canal.<br>
-                    • <strong class="text-amber-400">Campo Longitudinal $\vec{E}_x$ (Drenador):</strong> Apunta de D a S, arrastrando a los electrones en sentido contrario ($S \to D$).
+                    • <strong class="text-purple-400">Campo Transversal $\vec{E}_y$ (Compuerta):</strong> Apunta desde
+                    los iones positivos del canal ($N_D^+$) hacia las compuertas negativas ($P^+$). Controla
+                    electrostáticamente la apertura del canal.<br>
+                    • <strong class="text-amber-400">Campo Longitudinal $\vec{E}_x$ (Drenador):</strong> Apunta de D a
+                    S, arrastrando a los electrones en sentido contrario ($S \to D$).
                 </p>
             </div>
 
             <div class="lg:col-span-8 bg-slate-900/60 p-6 rounded-2xl border border-slate-800">
-                <h4 class="font-bold text-white mb-2 text-sm">Visualización Dinámica del Campo Eléctrico $\vec{E}$ y Portadores ($e^-$)</h4>
-                <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center" style="height: 400px;">
+                <h4 class="font-bold text-white mb-2 text-sm">Visualización Dinámica del Campo Eléctrico $\vec{E}$ y
+                    Portadores ($e^-$)</h4>
+                <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center"
+                    style="height: 400px;">
                     <canvas id="t2-canvas-wedge" width="650" height="380" class="w-full h-full max-w-[650px]"></canvas>
                 </div>
             </div>
@@ -173,28 +239,43 @@
 
         <!-- ================= MÓDULO 3: CURVAS CARACTERÍSTICAS ================= -->
         <section id="content-tab3" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div class="lg:col-span-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+            <div
+                class="lg:col-span-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
                 <div>
                     <h3 class="text-lg font-bold text-emerald-400 mb-4">⚙️ Controles del Punto Q</h3>
-                    
+
                     <div class="mb-3">
-                        <div class="flex justify-between mb-1"><label class="text-xs font-semibold text-slate-300">Tensión VGS:</label><span class="text-xs font-mono text-cyan-400 font-bold" id="t3-vgs-val">-1.50 V</span></div>
-                        <input type="range" id="t3-vgs" min="-4.0" max="0.0" step="0.1" value="-1.50" class="w-full accent-cyan-500">
+                        <div class="flex justify-between mb-1"><label
+                                class="text-xs font-semibold text-slate-300">Tensión VGS:</label><span
+                                class="text-xs font-mono text-cyan-400 font-bold" id="t3-vgs-val">-1.50 V</span></div>
+                        <input type="range" id="t3-vgs" min="-4.0" max="0.0" step="0.1" value="-1.50"
+                            class="w-full accent-cyan-500">
                     </div>
                     <div class="mb-4">
-                        <div class="flex justify-between mb-1"><label class="text-xs font-semibold text-slate-300">Tensión VDS:</label><span class="text-xs font-mono text-amber-400 font-bold" id="t3-vds-val">6.00 V</span></div>
-                        <input type="range" id="t3-vds" min="0.0" max="15.0" step="0.2" value="6.00" class="w-full accent-amber-500">
+                        <div class="flex justify-between mb-1"><label
+                                class="text-xs font-semibold text-slate-300">Tensión VDS:</label><span
+                                class="text-xs font-mono text-amber-400 font-bold" id="t3-vds-val">6.00 V</span></div>
+                        <input type="range" id="t3-vds" min="0.0" max="15.0" step="0.2" value="6.00"
+                            class="w-full accent-amber-500">
                     </div>
 
                     <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono space-y-2">
-                        <div class="flex justify-between"><span class="text-slate-500">Corriente IDSS (VGS=0):</span><span class="text-amber-400 font-bold">10.0 mA</span></div>
-                        <div class="flex justify-between"><span class="text-slate-500">Tensión Pinch-off VP:</span><span class="text-amber-400 font-bold">-4.00 V</span></div>
-                        <div class="flex justify-between border-t border-slate-900 pt-1"><span class="text-slate-500">Corriente Q (IDQ):</span><span class="text-emerald-400 font-bold" id="t3-idq-out">3.91 mA</span></div>
-                        <div class="flex justify-between"><span class="text-slate-500">Zona de Operación:</span><span class="text-sky-400 font-bold" id="t3-zone-out">SATURACIÓN</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Corriente IDSS
+                                (VGS=0):</span><span class="text-amber-400 font-bold">10.0 mA</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Tensión Pinch-off VP:</span><span
+                                class="text-amber-400 font-bold">-4.00 V</span></div>
+                        <div class="flex justify-between border-t border-slate-900 pt-1"><span
+                                class="text-slate-500">Corriente Q (IDQ):</span><span class="text-emerald-400 font-bold"
+                                id="t3-idq-out">3.91 mA</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Zona de Operación:</span><span
+                                class="text-sky-400 font-bold" id="t3-zone-out">SATURACIÓN</span></div>
                     </div>
                 </div>
                 <p class="text-[11px] text-slate-500 italic mt-4">
-                    <strong>Relación Parabólica de Shockley:</strong> En la región de saturación ($V_{DS} \ge V_{DS(sat)}$), la corriente responde a $I_D = I_{DSS} \left(1 - \frac{V_{GS}}{V_P}\right)^2$. El punto de operación $Q$ se correlaciona simultáneamente en la familia de salida y en la parábola de transferencia.
+                    <strong>Relación Parabólica de Shockley:</strong> En la región de saturación ($V_{DS} \ge
+                    V_{DS(sat)}$), la corriente responde a $I_D = I_{DSS} \left(1 - \frac{V_{GS}}{V_P}\right)^2$. El
+                    punto de operación $Q$ se correlaciona simultáneamente en la familia de salida y en la parábola de
+                    transferencia.
                 </p>
             </div>
 
@@ -202,14 +283,18 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
                         <h4 class="font-bold text-white mb-2 text-xs">Familia de Salida ID vs VDS</h4>
-                        <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center" style="height: 310px;">
-                            <canvas id="t3-canvas-output" width="300" height="300" class="w-full h-full max-w-[300px]"></canvas>
+                        <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center"
+                            style="height: 310px;">
+                            <canvas id="t3-canvas-output" width="300" height="300"
+                                class="w-full h-full max-w-[300px]"></canvas>
                         </div>
                     </div>
                     <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
                         <h4 class="font-bold text-white mb-2 text-xs">Transferencia ID vs VGS (Shockley)</h4>
-                        <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center" style="height: 310px;">
-                            <canvas id="t3-canvas-transfer" width="300" height="300" class="w-full h-full max-w-[300px]"></canvas>
+                        <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center"
+                            style="height: 310px;">
+                            <canvas id="t3-canvas-transfer" width="300" height="300"
+                                class="w-full h-full max-w-[300px]"></canvas>
                         </div>
                     </div>
                 </div>
@@ -218,35 +303,57 @@
 
         <!-- ================= MÓDULO 4: CONDUCTANCIA, TRANSCONDUCTANCIA Y AMPLIFICADOR ================= -->
         <section id="content-tab4" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div class="lg:col-span-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+            <div
+                class="lg:col-span-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
                 <div>
                     <h3 class="text-lg font-bold text-sky-400 mb-4">⚙️ Parámetros de Polarización y Carga</h3>
-                    
+
                     <div class="mb-3">
-                        <div class="flex justify-between mb-1"><label class="text-xs font-semibold text-slate-300">Tensión Polarización $V_{GS}$:</label><span class="text-xs font-mono text-cyan-400 font-bold" id="t4-vgs-val">-1.00 V</span></div>
-                        <input type="range" id="t4-vgs" min="-4.0" max="0.0" step="0.1" value="-1.00" class="w-full accent-cyan-500">
+                        <div class="flex justify-between mb-1"><label
+                                class="text-xs font-semibold text-slate-300">Tensión Polarización $V_{GS}$:</label><span
+                                class="text-xs font-mono text-cyan-400 font-bold" id="t4-vgs-val">-1.00 V</span></div>
+                        <input type="range" id="t4-vgs" min="-4.0" max="0.0" step="0.1" value="-1.00"
+                            class="w-full accent-cyan-500">
                     </div>
 
                     <div class="mb-3">
-                        <div class="flex justify-between mb-1"><label class="text-xs font-semibold text-slate-300">Resistencia de Carga $R_D$:</label><span class="text-xs font-mono text-amber-400 font-bold" id="t4-rd-val">2.2 kΩ</span></div>
-                        <input type="range" id="t4-rd" min="0.5" max="10.0" step="0.1" value="2.2" class="w-full accent-amber-500">
+                        <div class="flex justify-between mb-1"><label
+                                class="text-xs font-semibold text-slate-300">Resistencia de Carga $R_D$:</label><span
+                                class="text-xs font-mono text-amber-400 font-bold" id="t4-rd-val">2.2 kΩ</span></div>
+                        <input type="range" id="t4-rd" min="0.5" max="10.0" step="0.1" value="2.2"
+                            class="w-full accent-amber-500">
                     </div>
 
                     <div class="mb-4">
-                        <div class="flex justify-between mb-1"><label class="text-xs font-semibold text-slate-300">Señal de Entrada $(V_{in}-pp)$:</label><span class="text-xs font-mono text-sky-400 font-bold" id="t4-vin-val">100 mV</span></div>
-                        <input type="range" id="t4-vin" min="10" max="400" step="10" value="100" class="w-full accent-sky-500">
+                        <div class="flex justify-between mb-1"><label class="text-xs font-semibold text-slate-300">Señal
+                                de Entrada $(V_{in}-pp)$:</label><span class="text-xs font-mono text-sky-400 font-bold"
+                                id="t4-vin-val">100 mV</span></div>
+                        <input type="range" id="t4-vin" min="10" max="400" step="10" value="100"
+                            class="w-full accent-sky-500">
                     </div>
 
                     <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono space-y-2">
-                        <div class="flex justify-between"><span class="text-slate-500">Transconductancia $g_m$:</span><span class="text-sky-400 font-bold" id="t4-gm-out">3.75 mS</span></div>
-                        <div class="flex justify-between"><span class="text-slate-500">Ganancia de Tensión $|A_v| = g_m \cdot R_D$:</span><span class="text-emerald-400 font-extrabold text-sm" id="t4-av-out">8.25x (18.3 dB)</span></div>
-                        <div class="flex justify-between"><span class="text-slate-500">Señal de Salida $(V_{out}-pp)$:</span><span class="text-emerald-400 font-bold" id="t4-vout-out">825 mV</span></div>
-                        <div class="flex justify-between border-t border-slate-900 pt-1.5"><span class="text-slate-500">Conductancia Óhmica $g_d$:</span><span class="text-amber-400 font-bold" id="t4-gd-out">3.75 mS</span></div>
-                        <div class="flex justify-between"><span class="text-slate-500">Resistencia de Canal $r_{ds}$:</span><span class="text-slate-300 font-bold" id="t4-rds-out">267 Ω</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Transconductancia
+                                $g_m$:</span><span class="text-sky-400 font-bold" id="t4-gm-out">3.75 mS</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Ganancia de Tensión $|A_v| = g_m
+                                \cdot R_D$:</span><span class="text-emerald-400 font-extrabold text-sm"
+                                id="t4-av-out">8.25x (18.3 dB)</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Señal de Salida
+                                $(V_{out}-pp)$:</span><span class="text-emerald-400 font-bold" id="t4-vout-out">825
+                                mV</span></div>
+                        <div class="flex justify-between border-t border-slate-900 pt-1.5"><span
+                                class="text-slate-500">Conductancia Óhmica $g_d$:</span><span
+                                class="text-amber-400 font-bold" id="t4-gd-out">3.75 mS</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Resistencia de Canal
+                                $r_{ds}$:</span><span class="text-slate-300 font-bold" id="t4-rds-out">267 Ω</span>
+                        </div>
                     </div>
                 </div>
                 <p class="text-[11px] text-slate-500 italic mt-4">
-                    <strong>Poder de Amplificación:</strong> La compuerta no consume corriente ($I_G \approx 0 \implies P_{in} \approx 0$), permitiendo ganancias de potencia teóricas enormes ($A_P \to \infty$). Una diminuta excursión de tensión en compuerta modula la corriente $i_d = g_m \cdot v_{in}$, generando sobre $R_D$ una réplica amplificada con desfase de $180^\circ$.
+                    <strong>Poder de Amplificación:</strong> La compuerta no consume corriente ($I_G \approx 0 \implies
+                    P_{in} \approx 0$), permitiendo ganancias de potencia teóricas enormes ($A_P \to \infty$). Una
+                    diminuta excursión de tensión en compuerta modula la corriente $i_d = g_m \cdot v_{in}$, generando
+                    sobre $R_D$ una réplica amplificada con desfase de $180^\circ$.
                 </p>
             </div>
 
@@ -258,15 +365,19 @@
                             <span>Osciloscopio: CH1 (Entrada) vs CH2 (Salida)</span>
                             <span class="text-emerald-400 font-mono" id="t4-scope-tag">Av = -8.3x</span>
                         </h4>
-                        <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center" style="height: 310px;">
-                            <canvas id="t4-canvas-scope" width="300" height="300" class="w-full h-full max-w-[300px]"></canvas>
+                        <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center"
+                            style="height: 310px;">
+                            <canvas id="t4-canvas-scope" width="300" height="300"
+                                class="w-full h-full max-w-[300px]"></canvas>
                         </div>
                     </div>
                     <!-- Curva de Transconductancia -->
                     <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
                         <h4 class="font-bold text-white mb-2 text-xs">Curva gm(VGS) y Resistencia rds(VGS)</h4>
-                        <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center" style="height: 310px;">
-                            <canvas id="t4-canvas-gm" width="300" height="300" class="w-full h-full max-w-[300px]"></canvas>
+                        <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center"
+                            style="height: 310px;">
+                            <canvas id="t4-canvas-gm" width="300" height="300"
+                                class="w-full h-full max-w-[300px]"></canvas>
                         </div>
                     </div>
                 </div>
@@ -275,35 +386,58 @@
 
         <!-- ================= MÓDULO 5: SIMULADOR DE ALTA IMPEDANCIA ================= -->
         <section id="content-tab5" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div class="lg:col-span-5 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+            <div
+                class="lg:col-span-5 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
                 <div>
                     <h3 class="text-lg font-bold text-rose-400 mb-4">⚙️ Medidor de Corriente de Fuga $(I_{GSS})$</h3>
-                    
+
                     <div class="mb-4">
-                        <div class="flex justify-between mb-1"><label class="text-xs font-semibold text-slate-300">Tensión Inversa de Gate $(V_{GS})$:</label><span class="text-sm font-mono text-cyan-400 font-bold" id="t5-vgs-val">-5.00 V</span></div>
-                        <input type="range" id="t5-vgs" min="-10.0" max="0.0" step="0.5" value="-5.00" class="w-full accent-cyan-500">
+                        <div class="flex justify-between mb-1"><label
+                                class="text-xs font-semibold text-slate-300">Tensión Inversa de Gate
+                                $(V_{GS})$:</label><span class="text-sm font-mono text-cyan-400 font-bold"
+                                id="t5-vgs-val">-5.00 V</span></div>
+                        <input type="range" id="t5-vgs" min="-10.0" max="0.0" step="0.5" value="-5.00"
+                            class="w-full accent-cyan-500">
                     </div>
 
                     <div class="mb-4">
-                        <div class="flex justify-between mb-1"><label class="text-xs font-semibold text-slate-300">Temperatura del Cristal $(T)$:</label><span class="text-sm font-mono text-rose-400 font-bold" id="t5-temp-val">300 K (27°C)</span></div>
-                        <input type="range" id="t5-temp" min="250" max="400" step="5" value="300" class="w-full accent-rose-500">
+                        <div class="flex justify-between mb-1"><label
+                                class="text-xs font-semibold text-slate-300">Temperatura del Cristal $(T)$:</label><span
+                                class="text-sm font-mono text-rose-400 font-bold" id="t5-temp-val">300 K (27°C)</span>
+                        </div>
+                        <input type="range" id="t5-temp" min="250" max="400" step="5" value="300"
+                            class="w-full accent-rose-500">
                     </div>
 
                     <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono space-y-2.5">
-                        <div class="flex justify-between"><span class="text-slate-500">Corriente Fuga de Gate $(I_{GSS})$:</span><span class="text-rose-400 font-bold text-sm" id="t5-igss-out">10.0 pA</span></div>
-                        <div class="flex justify-between"><span class="text-slate-500">Impedancia Entrada $(R_{in} = |V_{GS}|/I_{GSS})$:</span><span class="text-emerald-400 font-extrabold text-sm" id="t5-rin-out">500.0 GΩ</span></div>
-                        <div class="flex justify-between border-t border-slate-900 pt-1.5"><span class="text-slate-300 font-bold">Comparación con BJT (IB):</span><span class="text-amber-400 font-bold">JFET es >1.000.000x más alta</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Corriente Fuga de Gate
+                                $(I_{GSS})$:</span><span class="text-rose-400 font-bold text-sm" id="t5-igss-out">10.0
+                                pA</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Impedancia Entrada $(R_{in} =
+                                |V_{GS}|/I_{GSS})$:</span><span class="text-emerald-400 font-extrabold text-sm"
+                                id="t5-rin-out">500.0 GΩ</span></div>
+                        <div class="flex justify-between border-t border-slate-900 pt-1.5"><span
+                                class="text-slate-300 font-bold">Comparación con BJT (IB):</span><span
+                                class="text-amber-400 font-bold">JFET es >1.000.000x más alta</span></div>
                     </div>
                 </div>
                 <p class="text-[11px] text-slate-500 italic mt-4">
-                    <strong>Física de la Alta Impedancia:</strong> Al estar la juntura en inversa, solo circula la corriente de generación térmica de pares $e^--h^+$ en la ZCE ($I_{GSS} \sim \text{pA}$). Aunque se duplica aproximadamente cada $10^\circ\text{C}$, $R_{in}$ permanece en el rango de los $\text{G}\Omega$, a diferencia del BJT donde la juntura $BE$ en directa demanda microamperios continuos.
+                    <strong>Física de la Alta Impedancia:</strong> Al estar la juntura en inversa, solo circula la
+                    corriente de generación térmica de pares $e^--h^+$ en la ZCE ($I_{GSS} \sim \text{pA}$). Aunque se
+                    duplica aproximadamente cada $10^\circ\text{C}$, $R_{in}$ permanece en el rango de los
+                    $\text{G}\Omega$, a diferencia del BJT donde la juntura $BE$ en directa demanda microamperios
+                    continuos.
                 </p>
             </div>
 
-            <div class="lg:col-span-7 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
-                <h4 class="font-bold text-white mb-2 text-sm">Circuito de Medición Dinámico: Amperímetro Ultra-Sensible y Comparativa BJT vs JFET</h4>
-                <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center" style="height: 380px;">
-                    <canvas id="t5-canvas-impedance" width="550" height="360" class="w-full h-full max-w-[550px]"></canvas>
+            <div
+                class="lg:col-span-7 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <h4 class="font-bold text-white mb-2 text-sm">Circuito de Medición Dinámico: Amperímetro Ultra-Sensible
+                    y Comparativa BJT vs JFET</h4>
+                <div class="relative bg-slate-950 rounded-xl overflow-hidden p-2 flex justify-center"
+                    style="height: 380px;">
+                    <canvas id="t5-canvas-impedance" width="550" height="360"
+                        class="w-full h-full max-w-[550px]"></canvas>
                 </div>
             </div>
         </section>
@@ -352,18 +486,19 @@
             const vgsInput = document.getElementById('t1-vgs');
             if (!vgsInput) return;
             const Vgs = parseFloat(vgsInput.value);
-            
+
             const vgsValElem = document.getElementById('t1-vgs-val');
             if (vgsValElem) vgsValElem.textContent = Vgs.toFixed(2) + " V";
 
             const Vp = -4.0;
-            const ratio = Math.min(1.0, Math.max(0.0, Vgs / Vp));
+            const Vbi = 0.7;
+            const ratio = Math.min(1.0, Math.max(0.0, (Vbi - Vgs) / (Vbi - Vp)));
             const h = Math.sqrt(ratio);
             const ch_eff = 1.0 - h;
 
             const chWidthElem = document.getElementById('t1-ch-width');
             if (chWidthElem) chWidthElem.textContent = `${ch_eff.toFixed(2)} μm ` + (ch_eff < 0.05 ? "(CERRADO / PINCH-OFF)" : "(ABIERTO)");
-            
+
             const stateElem = document.getElementById('t1-canal-state');
             if (stateElem) {
                 if (ch_eff < 0.05) {
@@ -390,6 +525,8 @@
             ctx.fillStyle = '#082f49'; ctx.fillRect(x0, y0, w, h_chan);
             ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2; ctx.strokeRect(x0, y0, w, h_chan);
 
+            ctx.fillStyle = '#c084fc'; ctx.font = 'bold 11px monospace';
+            ctx.fillText(`Vbi = 0.70 V (ZCE inicial)`, x0 + 250, y0 - 58);
             const zce_h = (h_chan / 2) * h_ratio;
 
             ctx.fillStyle = '#431407';
@@ -404,7 +541,7 @@
             ctx.fillRect(x0 + 80, y0, 300, zce_h);
             ctx.fillRect(x0 + 80, y0 + h_chan - zce_h, 300, zce_h);
 
-            ctx.strokeStyle = '#38bdf8'; 
+            ctx.strokeStyle = '#38bdf8';
             ctx.lineWidth = 1.5;
             ctx.setLineDash([4, 4]);
             ctx.beginPath(); ctx.moveTo(x0 + 80, y0 + zce_h); ctx.lineTo(x0 + 380, y0 + zce_h); ctx.stroke();
@@ -471,11 +608,16 @@
             let regionColor = "";
 
             const veOut = document.getElementById('t2-ve-out');
-            if (Vds < Vdssat) {
+            if (Vgs <= Vp) {
+                Id = 0.0;
+                regionStr = "CORTE (OFF / CANAL ESTRANGULADO)";
+                regionColor = "text-rose-400 font-extrabold text-xs uppercase";
+                if (veOut) veOut.textContent = "0 (Sin portadores móviles)";
+            } else if (Vds < Vdssat) {
                 Id = Idss * (2 * (1 - Vgs / Vp) * (Vds / -Vp) - Math.pow(Vds / -Vp, 2));
                 regionStr = "REGIÓN ÓHMICA / TRIÓDICA";
                 regionColor = "text-amber-400 font-extrabold text-xs uppercase";
-                if (veOut) veOut.textContent = "Drift Moderada (Función de VDS)";
+                if (veOut) veOut.textContent = Vds === 0 ? "0 (Equilibrio térmico)" : "Drift Moderada (Función de VDS)";
             } else {
                 Id = Idss * Math.pow(1 - Vgs / Vp, 2);
                 regionStr = "SATURACIÓN (ESTRANGULADO EN DRAIN)";
@@ -531,9 +673,10 @@
             ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2; ctx.strokeRect(x0, y0, w, h_chan);
 
             // Alturas ZCE en Source y Drain
-            const zce_source = (h_chan / 2) * Math.sqrt(Math.min(1.0, Vgs / Vp));
-            const isSaturated = Vds >= Vdssat;
-            const zce_drain = isSaturated ? (h_chan / 2) : (h_chan / 2) * Math.sqrt(Math.min(1.0, (Vds - Vgs) / -Vp));
+            const isCutoff = Vgs <= Vp;
+            const zce_source = isCutoff ? (h_chan / 2) : (h_chan / 2) * Math.sqrt(Math.min(1.0, Vgs / Vp));
+            const isSaturated = !isCutoff && Vds >= Vdssat;
+            const zce_drain = (isCutoff || isSaturated) ? (h_chan / 2) : (h_chan / 2) * Math.sqrt(Math.min(1.0, (Vds - Vgs) / -Vp));
 
             let x_pinch = x0 + 400;
             if (isSaturated) {
@@ -612,22 +755,27 @@
 
             // Flujo de electrones animados
             ctx.fillStyle = '#38bdf8';
-            for (let i = 0; i < 28; i++) {
-                const progress = ((i * 18 + animPhaseT2 * 22) % w);
-                const px = x0 + progress;
-                
-                let local_zce = zce_source;
-                if (px >= x0 + 80 && px <= x_pinch) {
-                    const frac = (px - (x0 + 80)) / (x_pinch - (x0 + 80));
-                    local_zce = zce_source + frac * ((h_chan / 2) - zce_source);
-                } else if (px > x_pinch) {
-                    local_zce = h_chan / 2 - 2;
-                }
-                
-                const allowed_h = Math.max(2, (h_chan / 2) - local_zce - 3);
-                const py = midY + (Math.sin(i * 1.5 + animPhaseT2) * allowed_h * 0.75);
 
-                ctx.beginPath(); ctx.arc(px, py, 3, 0, Math.PI * 2); ctx.fill();
+            if (!isCutoff) {
+                ctx.fillStyle = '#38bdf8';
+
+                for (let i = 0; i < 28; i++) {
+                    const progress = ((i * 18 + animPhaseT2 * 22) % w);
+                    const px = x0 + progress;
+
+                    let local_zce = zce_source;
+                    if (px >= x0 + 80 && px <= x_pinch) {
+                        const frac = (px - (x0 + 80)) / (x_pinch - (x0 + 80));
+                        local_zce = zce_source + frac * ((h_chan / 2) - zce_source);
+                    } else if (px > x_pinch) {
+                        local_zce = h_chan / 2 - 2;
+                    }
+
+                    const allowed_h = Math.max(2, (h_chan / 2) - local_zce - 3);
+                    const py = midY + (Math.sin(i * 1.5 + animPhaseT2) * allowed_h * 0.75);
+
+                    ctx.beginPath(); ctx.arc(px, py, 3, 0, Math.PI * 2); ctx.fill();
+                }
             }
 
             // Etiquetas
@@ -643,8 +791,9 @@
 
             if (isSaturated) {
                 ctx.fillStyle = '#fbbf24'; ctx.font = 'bold 10px monospace';
-                ctx.fillText('PINCH-OFF POINT', x_pinch - 45, midY - (h_chan/2) - 8);
+                ctx.fillText('PINCH-OFF POINT', x_pinch - 45, midY - (h_chan / 2) - 8);
             }
+
         }
 
         // ================= MÓDULO 3 =================
@@ -784,7 +933,7 @@
 
             if (gmOut) gmOut.textContent = gm.toFixed(2) + " mS";
             if (avOut) avOut.textContent = `${Av.toFixed(2)}x (${Av_dB.toFixed(1)} dB)`;
-            if (voutOut) voutOut.textContent = `${Vout_pkpk.toFixed(0)} mV (${(Vout_pkpk/1000).toFixed(2)} V)`;
+            if (voutOut) voutOut.textContent = `${Vout_pkpk.toFixed(0)} mV (${(Vout_pkpk / 1000).toFixed(2)} V)`;
             if (gdOut) gdOut.textContent = gd.toFixed(2) + " mS";
             if (rdsOut) rdsOut.textContent = rds < 50000 ? rds.toFixed(0) + " Ω" : "∞ (Corte)";
             if (scopeTag) scopeTag.textContent = `Av = -${Av.toFixed(1)}x`;
@@ -827,7 +976,7 @@
             ctx.strokeStyle = '#10b981'; ctx.lineWidth = 2.5; ctx.beginPath();
             for (let x = 0; x <= w; x++) {
                 const t = (x / w) * 4 * Math.PI + animPhaseScope;
-                const y = oy - (-Math.sin(t)) * Math.min(h - 5, (Vout_pk * 0.15)); 
+                const y = oy - (-Math.sin(t)) * Math.min(h - 5, (Vout_pk * 0.15));
                 if (x === 0) ctx.moveTo(ox + x, y); else ctx.lineTo(ox + x, y);
             }
             ctx.stroke();
@@ -953,15 +1102,21 @@
                 const vdsInput = document.getElementById('t2-vds');
                 const Vgs = vgsInput ? parseFloat(vgsInput.value) : -1.0;
                 const Vds = vdsInput ? parseFloat(vdsInput.value) : 2.0;
-                const Vdssat = Math.max(0.0, Vgs - (-4.0));
-                let currId = 1.0;
-                if (Vds < Vdssat) {
-                    currId = 10.0 * (2 * (1 - Vgs / -4.0) * (Vds / 4.0) - Math.pow(Vds / 4.0, 2));
-                } else {
-                    currId = 10.0 * Math.pow(1 - Vgs / -4.0, 2);
+                const Vp = -4.0;
+                const Vdssat = Math.max(0.0, Vgs - Vp);
+                let currId = 0.0;
+                if (Vgs > Vp) {
+                    if (Vds < Vdssat) {
+                        currId = 10.0 * (2 * (1 - Vgs / Vp) * (Vds / -Vp) - Math.pow(Vds / -Vp, 2));
+                    } else {
+                        currId = 10.0 * Math.pow(1 - Vgs / Vp, 2);
+                    }
                 }
-                animPhaseT2 += (0.04 + Math.max(0.1, currId) * 0.015);
+                if (currId > 0) {
+                    animPhaseT2 += (0.04 + currId * 0.015);
+                }
                 updateT2();
+
             } else if (activeTab === 'tab4') {
                 animPhaseScope += 0.12;
                 updateT4();
@@ -991,10 +1146,11 @@
             requestAnimationFrame(animationLoop);
         });
     </script>
-<footer class="sim-footer">
-    <p><strong>Física de los Semiconductores</strong> </p>
-    <p> José Luis Bossa </p>
-    <p> Facultad de Ingeniería y Ciencias Agropecuarias (FICA) - Universidad Nacional de San Luis </p>
-</footer>
+    <footer class="sim-footer">
+        <p><strong>Física de los Semiconductores</strong> </p>
+        <p> José Luis Bossa </p>
+        <p> Facultad de Ingeniería y Ciencias Agropecuarias (FICA) - Universidad Nacional de San Luis </p>
+    </footer>
 </body>
+
 </html>
