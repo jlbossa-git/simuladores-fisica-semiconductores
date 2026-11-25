@@ -58,3 +58,8 @@ Si querés probar o modificar los simuladores localmente en tu computadora:
 1. **Cloná el repositorio:**
    ```bash
    git clone [suspicious link removed]
+
+
+## 👥 Créditos
+
+Autoría del Proyecto: José Luis Bossa
